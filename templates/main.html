@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+{% block page_title %}
+صفحه اصلی
+{% endblock %}
+
+<body>
+{% block content %}
+{% if not user.is_authenticated %}
+<a href="/login">Login</a>
+<a href="/register">Register</a>
+{% endif %}
+{% endblock %}
+<br>
+{% block pannel %}
+<form method="post" action="logout">
+    {% csrf_token %}
+    <input type="submit" value="logout">
+</form>
+
+{% endblock %}
+</body>
+</html>

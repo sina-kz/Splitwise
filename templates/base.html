@@ -1,0 +1,58 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+<!-- Mirrored from iqonic.design/themes/cloudbox-new/html/backend/auth-sign-in.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Jan 2021 05:26:51 GMT -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block page_title %}{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'images/Dong-designstyle-jungle-m.png' %}"/>
+
+    <link rel="stylesheet" href="{% static 'css/backend.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/%40fortawesome/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/remixicon/fonts/remixicon.css' %}">
+
+    <!-- Viewer Plugin -->
+    <!--PDF-->
+    <link rel="stylesheet" href="{% static "vendor/doc-viewer/include/pdf/pdf.viewer.css" %}">
+    <!--Docs-->
+    <!--PPTX-->
+    <link rel="stylesheet" href="{% static "vendor/doc-viewer/include/PPTXjs/css/pptxjs.css" %}">
+    <link rel="stylesheet" href="{% static "vendor/doc-viewer/include/PPTXjs/css/nv.d3.min.css" %}">
+    <!--All Spreadsheet -->
+    <link rel="stylesheet" href="{% static "vendor/doc-viewer/include/SheetJS/handsontable.full.min.css" %}">
+    <!--Image viewer-->
+    <link rel="stylesheet"
+          href="{% static "vendor/doc-viewer/include/verySimpleImageViewer/css/jquery.verySimpleImageViewer.css" %}">
+    <!--officeToHtml-->
+    <link rel="stylesheet" href="{% static "vendor/doc-viewer/include/officeToHtml/officeToHtml.css" %}">
+</head>
+{% block content %}
+
+{% endblock %}
+
+{% if user.is_authenticated %}
+{% block pannel %}
+{% endblock %}
+{% endif %}
+<script src="{% static 'js/backend-bundle.min.js' %}"></script>
+
+<!-- Chart Custom JavaScript -->
+<script src="{% static 'js/customizer.js' %}"></script>
+
+<!-- Chart Custom JavaScript -->
+<script src="{% static 'js/chart-custom.js' %}"></script>
+
+<!--Image viewer-->
+<script src="{% static 'vendor/doc-viewer/include/verySimpleImageViewer/js/jquery.verySimpleImageViewer.js' %}"></script>
+<!-- app JavaScript -->
+<script src="{% static 'js/app.js' %}"></script>
+</body>
+
+<!-- Mirrored from iqonic.design/themes/cloudbox-new/html/backend/auth-sign-in.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Jan 2021 05:26:51 GMT -->
+</html>
