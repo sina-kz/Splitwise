@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block page_title %}
-صفحه ثبت نام
+    صفحه ثبت نام
 {% endblock %}
 
 {% block content %}
@@ -52,11 +52,11 @@
                                         </div>
                                     </div>
                                     {% if error.username %}
-                                    <div class="col-lg-12">
-                                        <div class="alert alert-danger" role="alert">
-                                            {{ error.username }}
+                                        <div class="col-lg-12">
+                                            <div class="alert alert-danger" role="alert">
+                                                {{ error.username }}
+                                            </div>
                                         </div>
-                                    </div>
                                     {% endif %}
                                     <div class="col-lg-12">
                                         <div class="floating-label form-group">
@@ -66,18 +66,18 @@
                                         </div>
                                     </div>
                                     {% if error.invalid_phone_number %}
-                                    <div class="col-lg-12">
-                                        <div class="alert alert-danger" role="alert">
-                                            {{ error.invalid_phone_number }}
+                                        <div class="col-lg-12">
+                                            <div class="alert alert-danger" role="alert">
+                                                {{ error.invalid_phone_number }}
+                                            </div>
                                         </div>
-                                    </div>
                                     {% endif %}
                                     {% if error.phone_number %}
-                                    <div class="col-lg-12">
-                                        <div class="alert alert-danger" role="alert">
-                                            {{ error.phone_number }}
+                                        <div class="col-lg-12">
+                                            <div class="alert alert-danger" role="alert">
+                                                {{ error.phone_number }}
+                                            </div>
                                         </div>
-                                    </div>
                                     {% endif %}
                                     <div class="col-lg-12">
                                         <div class="floating-label form-group">
@@ -101,11 +101,11 @@
                                         </div>
                                     </div>
                                     {% if error.password %}
-                                    <div class="col-lg-12">
-                                        <div class="alert alert-danger" role="alert">
-                                            {{ error.password }}
+                                        <div class="col-lg-12">
+                                            <div class="alert alert-danger" role="alert">
+                                                {{ error.password }}
+                                            </div>
                                         </div>
-                                    </div>
                                     {% endif %}
                                 </div>
                                 <button type="submit" class="btn btn-primary">ثبت نام</button>
@@ -120,13 +120,13 @@
             </div>
         </section>
     </div>
-{#    <script>#}
-{#        function matchPassword() {#}
-{#            var pw1 = document.getElementById("pw1");#}
-{#            var pw2 = document.getElementById("pw2");#}
-{#            if (pw1 !== pw2) {#}
-{#                alert("رمز های عبور یکسان نمی باشند!");#}
-{#            }#}
-{#        }#}
-{#    </script>#}
+    {#    <script>#}
+    {#        function matchPassword() {#}
+    {#            var pw1 = document.getElementById("pw1");#}
+    {#            var pw2 = document.getElementById("pw2");#}
+    {#            if (pw1 !== pw2) {#}
+    {#                alert("رمز های عبور یکسان نمی باشند!");#}
+    {#            }#}
+    {#        }#}
+    {#    </script>#}
 {% endblock %}

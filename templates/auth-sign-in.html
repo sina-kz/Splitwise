@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block page_title %}
-صفحه ورود کاربر
+    صفحه ورود کاربر
 {% endblock %}
 
 {% block content %}
@@ -34,11 +34,12 @@
                                             {{ error.username }}
                                         </div>
                                     </div>
-                                    {% endif %}
+                                {% endif %}
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="floating-label form-group">
-                                            <input class="floating-input form-control" value="{{username}}" type="text" placeholder=" "
+                                            <input class="floating-input form-control" value="{{ username }}"
+                                                   type="text" placeholder=" "
                                                    name="user_name"
                                             >
                                             <label>نام کاربری</label>
