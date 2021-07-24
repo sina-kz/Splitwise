@@ -9,7 +9,10 @@ import re
 
 def main_page(request):
     if request.user.is_authenticated:
-        return redirect('/dashboard/')
+        if not request.user.is_staff:
+            return redirect('/dashboard/')
+        else:
+            return redirect('/administrator/')
     else:
         return redirect('/login/')
 
@@ -97,6 +100,9 @@ def logout_view(request):
 
 def dashboard(request):
     if request.user.is_authenticated:
-        return render(request, "dashboard.html")
+        if not request.user.is_staff:
+            return render(request, "dashboard.html")
+        else:
+            return render(request, "admin_dashboard.html")
     else:
         return redirect('/login/')
