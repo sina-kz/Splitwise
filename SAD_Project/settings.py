@@ -134,3 +134,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'DongLand.User'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+EMAIL_FROM_USER = 'dongland.team@gmail.com'
+EMAIL_HOST_USER = 'dongland.team@gmail.com'
+EMAIL_HOST = 'smtp@gmail.com'
+EMAIL_HOST_PASSWORD = 'donglandteam123'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
