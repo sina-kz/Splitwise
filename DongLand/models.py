@@ -14,6 +14,9 @@ class Friend(models.Model):
     friend = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False,
                                related_name='knowns')
 
+    def __str__(self):
+        return f"{self.user.username} -> {self.friend.username}"
+
 
 class Bunch(models.Model):
     users = models.ManyToManyField(User, null=False, blank=False, related_name="%(class)s_members")

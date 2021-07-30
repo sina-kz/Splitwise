@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.conf import settings
 
-from .models import User
+from .models import User, Friend, Bunch, Expense
 import re
 
 
@@ -142,3 +142,14 @@ def invite_view(request):
 
 def add_group(request):
     return render(request, "create_group.html")
+
+
+def friends_list(request):
+    current_user = request.user
+    user_friends = Friend.objects.filter(user=current_user)
+    list_of_friends = list(user_friends)
+    friends = []
+    for friend in list_of_friends:
+        friends.append(friend.friend.username)
+    context = {"friends": friends}
+    return render(request, "list_of_friends.html", context)

@@ -1,0 +1,12 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block page_title %}
+    مشاهده دوستان
+{% endblock %}
+
+{% block content %}
+    {% for friend in friends %}
+        <p>{{ friend }}</p>
+    {% endfor %}
+{% endblock %}
