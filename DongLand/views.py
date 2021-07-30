@@ -1,13 +1,11 @@
 import datetime
-from django.contrib.auth import authenticate, default_app_config, login, logout
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import threading
 from django.template.loader import render_to_string
-from  django.core.mail import EmailMessage
+from django.core.mail import EmailMessage
 from django.conf import settings
-
-
 
 from .models import User
 import re
@@ -130,13 +128,17 @@ def invite_view(request):
         email_url = data['email']
         email_subject = 'Invitation mail from Dongland'
         email_body = render_to_string('invite.html', {
-            'user':request.user,
+            'user': request.user,
             'url': 'http://localhost/register'
         })
         email = EmailMessage(
-        subject=email_subject,
-        body=email_body,
-        from_email=settings.EMAIL_FROM_USER,
-        to=[email_url])
+            subject=email_subject,
+            body=email_body,
+            from_email=settings.EMAIL_FROM_USER,
+            to=[email_url])
         EmailThread(email).start()
         redirect('')
+
+
+def add_group(request):
+    return render(request, "create_group.html")
