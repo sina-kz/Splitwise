@@ -153,3 +153,25 @@ def friends_list(request):
         friends.append(friend.friend.username)
     context = {"friends": friends}
     return render(request, "list_of_friends.html", context)
+
+
+def groups_list(request):
+    current_user = request.user
+    user_groups = Bunch.objects.filter(users=current_user)
+    list_of_groups = list(user_groups)
+    groups = []
+    for group in list_of_groups:
+        groups.append(group.name)
+    context = {"groups": groups}
+    return render(request, "list_of_groups.html", context)
+
+
+def delete_groups(request):
+    current_user = request.user
+    user_groups = Bunch.objects.filter(creator=current_user)
+    list_of_groups = list(user_groups)
+    groups = []
+    for group in list_of_groups:
+        groups.append(group.name)
+    context = {"groups": groups}
+    return render(request, "delete_groups_list.html", context)
