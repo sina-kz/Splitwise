@@ -137,12 +137,21 @@ def invite_view(request):
             from_email=settings.EMAIL_FROM_USER,
             to=[email_url])
         EmailThread(email).start()
-        redirect('')
+        redirect('/dashboard/')
 
 
 def add_group(request):
+    print("inja")
+    if request.method == "POST":
+        form_data = request.POST
+        group_name = form_data.get('groupname')
+        print(group_name)
+        group = Bunch.objects.create(name=group_name, creator=request.user)
+        print("salam")
+        group.save()
+        return redirect('/dashboard/')
     return render(request, "create_group.html")
-
+    
 
 def friends_list(request):
     current_user = request.user
