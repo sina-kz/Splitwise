@@ -10,12 +10,17 @@
         <div class="image"></div>
         <div class="frm">
             <h2 style="margin-bottom: 30px">گروه جدید</h2>
-            <form>
-                <div class="form-group">
-                    <label for="username">نام گروه:</label>
-                    <input type="text" class="form-control" id="username" placeholder="وارد کردن نام گروه">
+            <form method="POST" action="/add-group/">
+                {% csrf_token %}
+                <div class="floating-input form-group">
+                    <label for="groupname">نام گروه:</label>
+                    <input type="text" class="form-control" name="groupname" placeholder="وارد کردن نام گروه">
                 </div>
-                <div class="form-group">
+                <div class="floating-input form-group">
+                    <label for="groupusers">نام کاربری اعضا (نام‌های کاربری با - جدا شوند)</label>
+                    <input type="text" class="form-control" name="groupusers" placeholder="نام کاربری اعضا">
+                </div>
+                <div class="floating-input form-group">
                     <button type="submit" class="btn btn-success btn-lg">ایجاد گروه جدید</button>
                 </div>
             </form>

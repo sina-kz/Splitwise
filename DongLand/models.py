@@ -24,6 +24,9 @@ class Bunch(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False,
                                 related_name='%(class)s_creator')
 
+    def __str__(self):
+        return self.name
+
 
 class Expense(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False,

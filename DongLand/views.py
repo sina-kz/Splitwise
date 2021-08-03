@@ -141,17 +141,23 @@ def invite_view(request):
 
 
 def add_group(request):
-    print("inja")
     if request.method == "POST":
         form_data = request.POST
         group_name = form_data.get('groupname')
-        print(group_name)
+        users = form_data.get('groupusers').split('-')
+        users.append(request.user)
+        print(users)
         group = Bunch.objects.create(name=group_name, creator=request.user)
-        print("salam")
+        for user in users:
+            if isinstance(user, User):
+                group.users.add(user)
+            else:
+                user_to_add = User.objects.get(username=user)
+                group.users.add(user_to_add)
         group.save()
         return redirect('/dashboard/')
     return render(request, "create_group.html")
-    
+
 
 def friends_list(request):
     current_user = request.user
