@@ -142,20 +142,25 @@ def invite_view(request):
 
 def add_group(request):
     if request.method == "POST":
+        error = {}
         form_data = request.POST
         group_name = form_data.get('groupname')
         users = form_data.get('groupusers').split('-')
-        users.append(request.user)
-        print(users)
-        group = Bunch.objects.create(name=group_name, creator=request.user)
-        for user in users:
-            if isinstance(user, User):
+        users_list = []
+        try:
+            for username in users:
+                user = User.objects.get(username=username)
+                users_list += [user]
+        except User.DoesNotExist:
+            error["username"] = "نام کاربری وارد شده در سامانه وجود ندارد."
+        print(error)
+        if len(error) == 0:
+            group = Bunch.objects.create(name=group_name, creator=request.user)
+            users_list += [request.user]
+            for user in users_list:
                 group.users.add(user)
-            else:
-                user_to_add = User.objects.get(username=user)
-                group.users.add(user_to_add)
-        group.save()
-        return redirect('/dashboard/')
+            group.save()
+            return redirect('/dashboard/')
     return render(request, "create_group.html")
 
 
