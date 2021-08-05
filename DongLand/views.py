@@ -1,4 +1,7 @@
 import datetime
+import random
+import string
+
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -6,7 +9,7 @@ import threading
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.conf import settings
-
+from django.urls import reverse
 from .models import User, Friend, Bunch, Expense
 import re
 
@@ -141,27 +144,58 @@ def invite_view(request):
 
 
 def add_group(request):
+    error = {}
     if request.method == "POST":
-        error = {}
         form_data = request.POST
         group_name = form_data.get('groupname')
-        users = form_data.get('groupusers').split('-')
-        users_list = []
-        try:
-            for username in users:
-                user = User.objects.get(username=username)
-                users_list += [user]
-        except User.DoesNotExist:
-            error["username"] = "نام کاربری وارد شده در سامانه وجود ندارد."
+        if group_name == "":
+            error["group_name"] = "نام گروه نباید خالی باشد."
         print(error)
         if len(error) == 0:
-            group = Bunch.objects.create(name=group_name, creator=request.user)
-            users_list += [request.user]
-            for user in users_list:
-                group.users.add(user)
+            group = Bunch.objects.create(name=group_name, creator=request.user, token_str=''.join(
+                random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
+            group_name = group.token_str
+            print(group_name)
+            group.users.add(request.user)
             group.save()
-            return redirect('/dashboard/')
-    return render(request, "create_group.html")
+            return redirect(reverse("add_users", args=(group_name,)))
+    data = {}
+    data["error"] = error
+    return render(request, "create_group.html", data)
+
+
+def add_users(request, group_name):
+    error = {}
+    if request.method == "POST":
+        form_data = request.POST
+        group_user = form_data.get('groupusers')
+        if group_user == "":
+            error["group_user"] = "نام کاربر نباید خالی باشد."
+        group = Bunch.objects.get(token_str=group_name, creator=request.user)
+        user = None
+        user_exist = True
+        try:
+            user = User.objects.get(username=group_user)
+        except User.DoesNotExist:
+            error["no_user"] = "کاربر " + group_user + " در سامانه وجود ندارد."
+            user_exist = False
+        user_friends = Friend.objects.filter(user=request.user)
+        list_of_friends = list(user_friends)
+        if user_exist:
+            if user == request.user:
+                error["same_user"] = "شما قبلا به گروه اضافه شده‌اید."
+            elif user not in list_of_friends:
+                error["friendship"] = "کاربر " + group_user + " از دوستان شما نیست."
+            elif user in list(group.users):
+                error["existed"] = "کاربر " + group_user + " قبلا به گروه اضافه شده است."
+        data = {"error": error}
+        if len(error) == 0:
+            group.users.add(user)
+            group.save()
+            return redirect(reverse("add_users", args=(group_name,)))
+        else:
+            return render(request, "add_users_to_group.html", data)
+    return render(request, "add_users_to_group.html", {})
 
 
 def friends_list(request):

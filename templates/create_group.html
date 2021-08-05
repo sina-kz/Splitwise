@@ -16,14 +16,14 @@
                     <label for="groupname">نام گروه:</label>
                     <input type="text" class="form-control" name="groupname" placeholder="وارد کردن نام گروه">
                 </div>
-                <div class="floating-input form-group">
-                    <label for="groupusers">نام کاربری اعضا (نام‌های کاربری با - جدا شوند)</label>
-                    <input type="text" class="form-control" name="groupusers" placeholder="نام کاربری اعضا">
-                </div>
-                <div class="floating-input form-group">
-                    <button type="submit" class="btn btn-success btn-lg">ایجاد گروه جدید</button>
-                </div>
             </form>
         </div>
+        {% if error.group_name %}
+            <div class="col-lg-12">
+                <div class="alert alert-danger" role="alert">
+                    {{ error.group_name }}
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+import random
+import string
 
 
 # Create your models here
@@ -23,6 +25,7 @@ class Bunch(models.Model):
     name = models.CharField(max_length=150, unique=False, blank=False, null=False)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, null=False, blank=False,
                                 related_name='%(class)s_creator')
+    token_str = models.CharField(max_length=10, default=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
 
     def __str__(self):
         return self.name
