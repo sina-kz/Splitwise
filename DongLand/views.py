@@ -216,7 +216,8 @@ def groups_list(request):
     groups = []
     for group in list_of_groups:
         groups.append(group.name)
-    context = {"groups": groups}
+    print(list_of_groups)
+    context = {"groups": list_of_groups}
     return render(request, "list_of_groups.html", context)
 
 
