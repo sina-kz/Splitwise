@@ -11,8 +11,7 @@
     <title>{% block page_title %}{% endblock %}</title>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{% static "images/favicon.ico" %}"/>
-
+    <link rel="shortcut icon" href="{% static 'images/Dong-designstyle-jungle-m.png' %}"/>
     <link rel="stylesheet" href="{% static "css/backend.min.css" %}">
     <link rel="stylesheet" href="{% static "vendor/%40fortawesome/fontawesome-free/css/all.min.css" %}">
     <link rel="stylesheet" href="{% static "vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css" %}">
@@ -69,7 +68,7 @@
                                 </a>
                             </li>
                             <li class=" ">
-                                <a href="{%  url 'groups_list' %}">
+                                <a href="{% url 'groups_list' %}">
                                     <i class="las la-clipboard"></i><span>مشاهده گروه‌ها</span>
                                 </a>
                             </li>
@@ -100,7 +99,7 @@
                                 </a>
                             </li>
                             <li class=" ">
-                                <a href="page-android.html">
+                                <a href="{% url 'add_friend' %}">
                                     <i class="las la-search-plus"></i><span>جستجوی دوستان</span>
                                 </a>
                             </li>

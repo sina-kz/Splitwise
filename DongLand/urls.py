@@ -13,5 +13,6 @@ urlpatterns = [
     path('delete-groups/', views.delete_groups, name="delete_groups"),
     path('friends-list/', views.friends_list, name="friends_list"),
     path('logout/', views.logout_view, name="logout_url"),
+    path('add-friend/', views.add_friend, name="add_friend"),
     path('add-group-users/<group_name>/', views.add_users, name='add_users')
 ]

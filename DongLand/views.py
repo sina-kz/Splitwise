@@ -168,26 +168,27 @@ def add_users(request, group_name):
     error = {}
     if request.method == "POST":
         form_data = request.POST
-        group_user = form_data.get('groupusers')
-        if group_user == "":
-            error["group_user"] = "نام کاربر نباید خالی باشد."
         group = Bunch.objects.get(token_str=group_name, creator=request.user)
         user = None
         user_exist = True
-        try:
-            user = User.objects.get(username=group_user)
-        except User.DoesNotExist:
-            error["no_user"] = "کاربر " + group_user + " در سامانه وجود ندارد."
-            user_exist = False
-        user_friends = Friend.objects.filter(user=request.user)
-        list_of_friends = list(user_friends)
-        if user_exist:
-            if user == request.user:
-                error["same_user"] = "شما قبلا به گروه اضافه شده‌اید."
-            elif user not in list_of_friends:
-                error["friendship"] = "کاربر " + group_user + " از دوستان شما نیست."
-            elif user in list(group.users):
-                error["existed"] = "کاربر " + group_user + " قبلا به گروه اضافه شده است."
+        group_user = form_data.get('groupusers')
+        if group_user == "":
+            error["group_user"] = "نام کاربر نباید خالی باشد."
+        else:
+            try:
+                user = User.objects.get(username=group_user)
+            except User.DoesNotExist:
+                error["no_user"] = "کاربر " + group_user + " در سامانه وجود ندارد."
+                user_exist = False
+            user_friends = Friend.objects.filter(user=request.user)
+            list_of_friends = [friend.friend for friend in user_friends]
+            if user_exist:
+                if user == request.user:
+                    error["same_user"] = "شما قبلا به گروه اضافه شده‌اید."
+                elif user not in list_of_friends:
+                    error["friendship"] = "کاربر " + group_user + " از دوستان شما نیست."
+                elif user in list(group.users.all()):
+                    error["existed"] = "کاربر " + group_user + " قبلا به گروه اضافه شده است."
         data = {"error": error}
         if len(error) == 0:
             group.users.add(user)
@@ -196,6 +197,38 @@ def add_users(request, group_name):
         else:
             return render(request, "add_users_to_group.html", data)
     return render(request, "add_users_to_group.html", {})
+
+
+def add_friend(request):
+    error = {}
+    if request.method == "POST":
+        form_data = request.POST
+        username = form_data.get('friend')
+        user = None
+        if username == "":
+            error["username"] = "نام کاربر نباید خالی باشد."
+        else:
+            previous_friends = list(Friend.objects.filter(user=request.user))
+            list_of_friends = [friend.friend for friend in previous_friends]
+            user_exist = True
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                error["no_user"] = "کاربر " + username + " در سامانه وجود ندارد."
+                user_exist = False
+            if user_exist:
+                if user == request.user:
+                    error["same_user"] = "نمی‌توانید خود را به دوستان اضافه کنید."
+                elif user in list_of_friends:
+                    error["friendship"] = "کاربر " + username + " قبلا به دوستان شما اضافه شده است."
+        data = {"error": error}
+        if len(error) == 0:
+            Friend.objects.create(user=request.user, friend=user)
+            Friend.objects.create(user=user, friend=request.user)
+            return redirect('/add-friend/')
+        else:
+            return render(request, "add_friend.html", data)
+    return render(request, "add_friend.html", {})
 
 
 def friends_list(request):
