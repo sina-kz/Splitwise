@@ -6,7 +6,37 @@
 {% endblock %}
 
 {% block content %}
-    {% for friend in friends %}
-        <p>{{ friend }}</p>
-    {% endfor %}
+    {#    {% for group in groups %}#}
+    {#        <p>{{ group }}</p>#}
+    {#    {% endfor %}#}
+    {% if friends|length == 0 %}
+        <p>در حال حاضر هیچ دوستی ندارید.</p>
+    {% else %}
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <!-- <div class="col col-lg-9 col-xl-7"> -->
+                <div class="card rounded-3">
+                    <div class="card-body p-4">
+
+                        <table class="table mb-4">
+                            <thead>
+                            <tr>
+                                <th scope="col" class="text-center" style="width: 10%">نام کاربری دوست</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in friends %}
+                                <tr>
+                                    <th scope="row" class="text-center">{{ item }}</th>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+                <!-- </div> -->
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
