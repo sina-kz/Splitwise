@@ -9,7 +9,7 @@
     <div class="container" id="registration-form">
         <div class="image"></div>
         <div class="frm">
-            <h2 style="margin-bottom: 30px">گروه جدید</h2>
+            <h2 style="margin-bottom: 30px">اضافه کردن کاربر به گروه</h2>
             <form method="POST" action=".">
                 {% csrf_token %}
                 <div class="floating-input form-group">
@@ -17,7 +17,7 @@
                     <input type="text" class="form-control" name="groupusers" placeholder="وارد کردن نام کاربر">
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-success btn-lg">ایجاد گروه</button>
+                    <button type="submit" class="btn btn-success btn-lg">درخواست اضافه کردن</button>
                 </div>
             </form>
         </div>

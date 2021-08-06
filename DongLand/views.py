@@ -263,3 +263,11 @@ def delete_groups(request):
         groups.append(group.name)
     context = {"groups": groups}
     return render(request, "delete_groups_list.html", context)
+
+
+def group_details(request, group_name):
+    group = Bunch.objects.get(token_str=group_name)
+    group_users = list(group.users.all())
+    context = {"group_users": group_users,
+               "group": group}
+    return render(request, "group_details.html", context)

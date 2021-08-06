@@ -34,8 +34,8 @@
                                     <td class="text-center">این گروه برای هزینه تقسیم هزینه ها می باشد</td>
                                     <td class="text-center">0 $</td>
                                     <td class="text-center">
-                                        <button type="submit" class="btn btn-info ms-1 text-center">مشاهده گروه</button>
-                                        <button type="submit" class="btn btn-danger text-center">حذف گروه</button>
+                                        <a class="btn btn-info ms-1 text-center" href="{% url 'group_details' item.token_str %}">مشاهده گروه</a>
+                                        <a class="btn btn-danger text-center">حذف گروه</a>
                                     </td>
                                 </tr>
                             {% endfor %}
