@@ -15,5 +15,6 @@ urlpatterns = [
     path('logout/', views.logout_view, name="logout_url"),
     path('add-friend/', views.add_friend, name="add_friend"),
     path('add-group-users/<group_name>/', views.add_users, name='add_users'),
-    path('groups/<group_name>/', views.group_details, name='group_details')
+    path('groups/<group_name>/', views.group_details, name='group_details'),
+    path('invite-user', views.invite_view, name='invite_user')
 ]

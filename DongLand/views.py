@@ -11,6 +11,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.urls import reverse
 from .models import User, Friend, Bunch, Expense
+from django.core.mail import send_mail
 import re
 
 
@@ -126,7 +127,9 @@ class EmailThread(threading.Thread):
 
 
 def invite_view(request):
+    print(6666)
     if request.method == "POST":
+        print(5555)
         data = request.POST
         email_url = data['email']
         email_subject = 'Invitation mail from Dongland'
@@ -134,13 +137,11 @@ def invite_view(request):
             'user': request.user,
             'url': 'http://localhost/register'
         })
-        email = EmailMessage(
-            subject=email_subject,
-            body=email_body,
-            from_email=settings.EMAIL_FROM_USER,
-            to=[email_url])
-        EmailThread(email).start()
-        redirect('/dashboard/')
+        email_from = settings.EMAIL_HOST_USER
+        recievers = [email_url, ]
+        send_mail(subject=email_subject, message=email_body, from_email=email_from, recipient_list=recievers)
+        return redirect('/dashboard/')
+    return render(request, "invite_user.html")
 
 
 def add_group(request):
