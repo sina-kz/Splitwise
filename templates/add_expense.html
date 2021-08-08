@@ -2,15 +2,66 @@
 {% load static %}
 
 {% block page_title %}
-    اضافه کردن هزینه
+    اضافه کردن هزینه جدید
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <button class="btn col-sm btn-primary" style="margin:10px"><i class="fa fa-equals"></i>تقسیم مساوی هزینه بین افراد گروه</button>
-            <button class="btn col-sm btn-primary" style="margin:10px"><i class="fa fa-dollar-sign"></i>تقسیم هزینه ها با مشخص کردن هزینه</button>
-            <button class="btn col-sm btn-primary" style="margin:10px"><i class="fa fa-percentage"></i>تقسیم هزینه ها با مشخص کردن درصد</button>
-        </div>
-    </div>
+    {% if users|length > 1 %}
+        <form>
+            <div class="form-group">
+                <label for="totalAmount">مبلغ کل</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="کل هزینه پرداخت شده"
+                           aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">تومان</span>
+                    </div>
+                </div>
+            </div>
+            {% if type_of_calculate != "1" %}
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">نام کاربری</th>
+                        <th scope="col">{% if type_of_calculate == "2" %}
+                            مبلغ
+                        {% else %}
+                            درصد
+                        {% endif %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        {% if request.user.username != user.username %}
+                            <tr>
+                                <th scope="row">{{ user.username }}</th>
+                                <td class="input-group mb-3">
+                                    <input type="text" class="form-control"
+                                           placeholder="{% if type_of_calculate == "2" %}مبلغ مورد نظر را وارد کنید{% else %}درصد مورد نظر را وارد کنید{% endif %}"
+                                           aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"
+                                              id="basic-addon2">{% if type_of_calculate == "2" %}
+                                            تومان
+                                        {% else %}
+                                            %
+                                        {% endif %}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+            <div class="form-group" dir="ltr">
+                <label for="exampleFormControlFile1">عکس هزینه مورد نظر را آپلود کنید</label>
+                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            </div>
+            <button type="submit" class="btn btn-primary">ثبت هزینه ها</button>
+        </form>
+    {% else %}
+        <h4>هیچ کسی جز شما در گروه حضور ندارد</h4>
+    {% endif %}
+
 {% endblock %}
