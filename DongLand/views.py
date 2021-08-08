@@ -250,20 +250,8 @@ def groups_list(request):
     groups = []
     for group in list_of_groups:
         groups.append(group.name)
-    print(list_of_groups)
     context = {"groups": list_of_groups}
     return render(request, "list_of_groups.html", context)
-
-
-def delete_groups(request):
-    current_user = request.user
-    user_groups = Bunch.objects.filter(creator=current_user)
-    list_of_groups = list(user_groups)
-    groups = []
-    for group in list_of_groups:
-        groups.append(group.name)
-    context = {"groups": groups}
-    return render(request, "delete_groups_list.html", context)
 
 
 def group_details(request, group_name):
@@ -277,6 +265,14 @@ def group_details(request, group_name):
 def add_expense(request):
     if request.method == "GET":
         return render(request, "add_expense.html")
-    elif request.method == "POST":
-        form_data = request.POST
-        print(form_data)
+    # elif request.method == "POST":
+    #     form_data = request.POST
+    #     print(form_data)
+
+
+def remove_group(request, token):
+    current_user = request.user
+    bunch_of_user = list(Bunch.objects.filter(token_str=token))
+    bunch_of_user[0].users.remove(current_user)
+
+    return redirect("/groups-list/")

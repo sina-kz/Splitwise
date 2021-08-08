@@ -10,12 +10,12 @@ urlpatterns = [
     path('administrator/', views.dashboard, name="admin_page"),
     path('add-group/', views.add_group, name="add_group"),
     path('groups-list/', views.groups_list, name="groups_list"),
-    path('delete-groups/', views.delete_groups, name="delete_groups"),
     path('friends-list/', views.friends_list, name="friends_list"),
     path('logout/', views.logout_view, name="logout_url"),
     path('add-friend/', views.add_friend, name="add_friend"),
     path('add-group-users/<group_name>/', views.add_users, name='add_users'),
     path('groups/<group_name>/', views.group_details, name='group_details'),
+    path('delete-group/<token>/', views.remove_group, name='remove_group'),
     path('add_expense/', views.add_expense, name='add_expense'),
     path('invite-user', views.invite_view, name='invite_user')
 ]
