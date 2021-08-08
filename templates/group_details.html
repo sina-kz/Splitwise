@@ -43,8 +43,8 @@
         <div class="input-group-btn">
             <a type="button" class="btn btn-primary btn-lg" href="{% url 'add_users' group.token_str %}">اضافه کردن
                 کاربر به گروه</a>
-            <a type="button" class="btn btn-info btn-lg" href="{% url 'add_expense' %}">اضافه کردن هزینه</a>
-            <a type="button" class="btn btn-danger btn-lg">حذف گروه</a>
+            <a type="button" class="btn btn-info btn-lg" href="{% url 'select_pay_method' token %}">اضافه کردن هزینه</a>
+            <a type="button" class="btn btn-danger btn-lg" href="{% url 'remove_group' token %}">ترک گروه</a>
         </div>
     </div>
 {% endblock %}

@@ -109,9 +109,9 @@ def logout_view(request):
 def dashboard(request):
     if request.user.is_authenticated:
         if not request.user.is_staff:
-            return render(request, "dashboard.html")
+            return render(request, "dashboard.html", {"username": request.user.username})
         else:
-            return render(request, "admin_dashboard.html")
+            return render(request, "admin_dashboard.html", {"username": request.user.username})
     else:
         return redirect('/login/')
 
@@ -258,21 +258,32 @@ def group_details(request, group_name):
     group = Bunch.objects.get(token_str=group_name)
     group_users = list(group.users.all())
     context = {"group_users": group_users,
-               "group": group}
+               "group": group,
+               "token": group_name}
     return render(request, "group_details.html", context)
 
 
-def add_expense(request):
+def select_pay_method(request, token):
     if request.method == "GET":
-        return render(request, "add_expense.html")
+        return render(request, "select_pay_method.html", {"token": token})
     # elif request.method == "POST":
     #     form_data = request.POST
     #     print(form_data)
+
+
+def add_expense(request, token, type_of_calculate):
+    if request.method == "GET":
+        bunch_of_user = list(Bunch.objects.filter(token_str=token))
+        users = list(bunch_of_user[0].users.all())
+        return render(request, "add_expense.html", {"users": users, "type_of_calculate": type_of_calculate})
 
 
 def remove_group(request, token):
     current_user = request.user
     bunch_of_user = list(Bunch.objects.filter(token_str=token))
     bunch_of_user[0].users.remove(current_user)
+
+    if len(bunch_of_user[0].users.all()) == 0:
+        Bunch.objects.filter(token_str=token).delete()
 
     return redirect("/groups-list/")

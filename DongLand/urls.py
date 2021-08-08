@@ -16,6 +16,7 @@ urlpatterns = [
     path('add-group-users/<group_name>/', views.add_users, name='add_users'),
     path('groups/<group_name>/', views.group_details, name='group_details'),
     path('delete-group/<token>/', views.remove_group, name='remove_group'),
-    path('add_expense/', views.add_expense, name='add_expense'),
+    path('select-pay-method/<token>/', views.select_pay_method, name='select_pay_method'),
+    path('add-expense/<token>/<type_of_calculate>/', views.add_expense, name='add_expense'),
     path('invite-user', views.invite_view, name='invite_user')
 ]
