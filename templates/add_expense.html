@@ -1,0 +1,17 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block page_title %}
+    اضافه کردن هزینه
+{% endblock %}
+
+{% block content %}
+    <form class="container" method="post" action="/add_expense/">
+        {% csrf_token %}
+        <div class="btn-group row" role="group" aria-label="Basic example">
+            <button type="submit" class="btn btn-primary btn-lg">تقسیم مساوی هزینه ها بین افراد گروه</button>
+            <button type="submit" class="btn btn-primary btn-lg">تقسیم هزینه ها با مبلغ</button>
+            <button type="submit" class="btn btn-primary btn-lg">تقسیم هزینه ها با درصد</button>
+        </div>
+    </form>
+{% endblock %}

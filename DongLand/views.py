@@ -272,3 +272,11 @@ def group_details(request, group_name):
     context = {"group_users": group_users,
                "group": group}
     return render(request, "group_details.html", context)
+
+
+def add_expense(request):
+    if request.method == "GET":
+        return render(request, "add_expense.html")
+    elif request.method == "POST":
+        form_data = request.POST
+        print(form_data)
