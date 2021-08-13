@@ -34,7 +34,7 @@
 
     <div class="iq-sidebar  sidebar-default ">
         <div class="iq-sidebar-logo d-flex align-items-center justify-content-center">
-            <a href="index.html" class="header-logo">
+            <a href="{% url 'dashboard_page' %}" class="header-logo">
                 <img src="{% static "images/Dong-designstyle-jungle-m.png" %}"
                      class="img-fluid rounded-normal light-logo" alt="logo">
                 <img src="{% static "images/Dong-designstyle-jungle-m.png" %}"
@@ -49,7 +49,7 @@
             <nav class="iq-sidebar-menu">
                 <ul id="iq-sidebar-toggle" class="iq-menu">
                     <li class="   {% block dashboard %}{% endblock %}">
-                        <a href="{% url "admin_page" %}" class="">
+                        <a href="{% url "dashboard_page" %}" class="">
                             <i class="las la-home"></i><span>داشبورد</span>
                         </a>
                         <ul id="dashboard" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">

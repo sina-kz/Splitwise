@@ -276,6 +276,8 @@ def add_expense(request, token, type_of_calculate):
         bunch_of_user = list(Bunch.objects.filter(token_str=token))
         users = list(bunch_of_user[0].users.all())
         return render(request, "add_expense.html", {"users": users, "type_of_calculate": type_of_calculate})
+    elif request.method == "POST":
+        print(request.POST)
 
 
 def remove_group(request, token):
