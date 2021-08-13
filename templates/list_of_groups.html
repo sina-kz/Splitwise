@@ -15,29 +15,27 @@
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <!-- <div class="col col-lg-9 col-xl-7"> -->
-                <div class="card rounded-3">
+                <div class="card rounded-3" style="width:100%">
                     <div class="card-body p-4">
 
                         <table class="table mb-4">
                             <thead>
                             <tr>
-                                <th scope="col" class="text-center" style="width: 10%">نام گروه</th>
-                                <th scope="col" class="text-center" style="width: 40%">توضیحات گروه</th>
-                                <th scope="col" class="text-center" style="width: 20%">میزان بدهکاری</th>
-                                <th scope="col" class="text-center" style="width: 30%">حذف/مشاهده</th>
+                                <th scope="col" class="text-center" style="width: 20%">نام گروه</th>
+                                <th scope="col" class="text-center" style="width: 30%">میزان بدهکاری</th>
+                                <th scope="col" class="text-center" style="width: 50%">حذف/مشاهده</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for item in groups %}
                                 <tr>
-                                    <th scope="row" class="text-center">{{ item.name }}</th>
-                                    <td class="text-center">این گروه برای هزینه تقسیم هزینه ها می باشد</td>
-                                    <td class="text-center">0 $</td>
+                                    <th scope="row" class="text-center">{{ item.0.name }}</th>
+                                    <td class="text-center">{{ item.1 }} تومان</td>
                                     <td class="text-center">
                                         <a class="btn btn-info ms-1 text-center"
-                                           href="{% url 'group_details' item.token_str %}">مشاهده گروه</a>
+                                           href="{% url 'group_details' item.0.token_str %}">مشاهده گروه</a>
                                         <a class="btn btn-danger text-center"
-                                           href="{% url 'remove_group' item.token_str %}">حذف گروه</a>
+                                           href="{% url 'remove_group' item.0.token_str %}">حذف گروه</a>
                                     </td>
                                 </tr>
                             {% endfor %}

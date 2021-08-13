@@ -3,6 +3,7 @@ import random
 import string
 
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import threading
@@ -12,15 +13,13 @@ from django.conf import settings
 from django.urls import reverse
 from .models import User, Friend, Bunch, Expense, Pay
 from django.core.mail import send_mail
+from Utils.Algorithms.split_algorithm import minCashFlow
 import re
 
 
 def main_page(request):
     if request.user.is_authenticated:
-        if not request.user.is_staff:
-            return redirect('/dashboard/')
-        else:
-            return redirect('/dashboard/')
+        return redirect('/dashboard/')
     else:
         return redirect('/login/')
 
@@ -106,14 +105,12 @@ def logout_view(request):
     return redirect('/login/')
 
 
+@login_required(login_url='login_page')
 def dashboard(request):
-    if request.user.is_authenticated:
-        if not request.user.is_staff:
-            return render(request, "dashboard.html", {"username": request.user.username})
-        else:
-            return render(request, "admin_dashboard.html", {"username": request.user.username})
+    if not request.user.is_staff:
+        return render(request, "dashboard.html", {"username": request.user.username})
     else:
-        return redirect('/login/')
+        return render(request, "admin_dashboard.html", {"username": request.user.username})
 
 
 class EmailThread(threading.Thread):
@@ -126,10 +123,9 @@ class EmailThread(threading.Thread):
         self.email.send()
 
 
+@login_required(login_url='login_page')
 def invite_view(request):
-    print(6666)
     if request.method == "POST":
-        print(5555)
         data = request.POST
         email_url = data['email']
         email_subject = 'Invitation mail from Dongland'
@@ -144,6 +140,7 @@ def invite_view(request):
     return render(request, "invite_user.html")
 
 
+@login_required(login_url='login_page')
 def add_group(request):
     error = {}
     if request.method == "POST":
@@ -165,6 +162,7 @@ def add_group(request):
     return render(request, "create_group.html", data)
 
 
+@login_required(login_url='login_page')
 def add_users(request, group_name):
     error = {}
     if request.method == "POST":
@@ -200,6 +198,7 @@ def add_users(request, group_name):
     return render(request, "add_users_to_group.html", {})
 
 
+@login_required(login_url='login_page')
 def add_friend(request):
     error = {}
     if request.method == "POST":
@@ -232,6 +231,7 @@ def add_friend(request):
     return render(request, "add_friend.html", {})
 
 
+@login_required(login_url='login_page')
 def friends_list(request):
     current_user = request.user
     user_friends = Friend.objects.filter(user=current_user)
@@ -243,26 +243,85 @@ def friends_list(request):
     return render(request, "list_of_friends.html", context)
 
 
+@login_required(login_url='login_page')
 def groups_list(request):
     current_user = request.user
     user_groups = Bunch.objects.filter(users=current_user)
     list_of_groups = list(user_groups)
     groups = []
     for group in list_of_groups:
-        groups.append(group.name)
-    context = {"groups": list_of_groups}
+        group_users = list(group.users.all())
+
+        num_of_users = len(list(group.users.all()))
+        graph = [[0 for i in range(num_of_users)] for j in range(num_of_users)]
+
+        expenses = list(Expense.objects.filter(bunch=group))
+        for i in range(len(group_users)):
+            print(group_users[i].username)
+        for expense in expenses:
+            for i in range(len(group_users)):
+                pay = list(Pay.objects.filter(expense=expense, payer=group_users[i]))
+                main_payer = expense.main_payer
+                index_of_main_payer = None
+
+                if main_payer.username == group_users[i].username:
+                    continue
+
+                for j in range(len(group_users)):
+                    if main_payer.username == group_users[j].username:
+                        index_of_main_payer = j
+                        break
+                if len(pay) != 0:
+                    amount = pay[0].amount
+                    graph[i][index_of_main_payer] += amount
+        final_graph = minCashFlow(graph)
+        user_index = None
+        for i in range(len(group_users)):
+            if group_users[i].username == current_user.username:
+                user_index = i
+                break
+        debt = int(sum(final_graph[user_index]))
+        groups.append((group, debt))
+    context = {"groups": groups}
     return render(request, "list_of_groups.html", context)
 
 
+@login_required(login_url='login_page')
 def group_details(request, group_name):
     group = Bunch.objects.get(token_str=group_name)
     group_users = list(group.users.all())
     context = {"group_users": group_users,
                "group": group,
                "token": group_name}
+
+    num_of_users = len(list(group.users.all()))
+    graph = [[0 for i in range(num_of_users)] for j in range(num_of_users)]
+
+    expenses = list(Expense.objects.filter(bunch=group))
+    for i in range(len(group_users)):
+        print(group_users[i].username)
+    for expense in expenses:
+        for i in range(len(group_users)):
+            pay = list(Pay.objects.filter(expense=expense, payer=group_users[i]))
+            main_payer = expense.main_payer
+            index_of_main_payer = None
+
+            if main_payer.username == group_users[i].username:
+                continue
+
+            for j in range(len(group_users)):
+                if main_payer.username == group_users[j].username:
+                    index_of_main_payer = j
+                    break
+            if len(pay) != 0:
+                amount = pay[0].amount
+                graph[i][index_of_main_payer] += amount
+    print(graph)
+    print(minCashFlow(graph))
     return render(request, "group_details.html", context)
 
 
+@login_required(login_url='login_page')
 def select_pay_method(request, token):
     if request.method == "GET":
         return render(request, "select_pay_method.html", {"token": token})
@@ -271,6 +330,7 @@ def select_pay_method(request, token):
     #     print(form_data)
 
 
+@login_required(login_url='login_page')
 def add_expense(request, token, type_of_calculate):
     if request.method == "GET":
         bunch_of_user = list(Bunch.objects.filter(token_str=token))
@@ -318,9 +378,10 @@ def add_expense(request, token, type_of_calculate):
                 pay = Pay.objects.create(expense=expense, payer=user, amount=share_of_user)
                 pay.save()
 
-        return HttpResponse("Hello")
+        return redirect(reverse("group_details", args=(token,)))
 
 
+@login_required(login_url='login_page')
 def remove_group(request, token):
     current_user = request.user
     bunch_of_user = list(Bunch.objects.filter(token_str=token))
