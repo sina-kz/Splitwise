@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.urls import reverse
-from .models import User, Friend, Bunch, Expense
+from .models import User, Friend, Bunch, Expense, Pay
 from django.core.mail import send_mail
 import re
 
@@ -20,7 +20,7 @@ def main_page(request):
         if not request.user.is_staff:
             return redirect('/dashboard/')
         else:
-            return redirect('/administrator/')
+            return redirect('/dashboard/')
     else:
         return redirect('/login/')
 
@@ -277,7 +277,48 @@ def add_expense(request, token, type_of_calculate):
         users = list(bunch_of_user[0].users.all())
         return render(request, "add_expense.html", {"users": users, "type_of_calculate": type_of_calculate})
     elif request.method == "POST":
-        print(request.POST)
+        form_data = request.POST
+        form_data_files = request.FILES
+        bunch = list(Bunch.objects.filter(token_str=token))[0]
+        total_amount = int(form_data.get('totalAmount'))
+        subject = form_data.get('totalAmount')
+        description = form_data.get('description')
+        main_payer = form_data.get('payer')
+        main_payer_user = list(User.objects.filter(username=main_payer))[0]
+        image = form_data_files.get('expenseImage')
+
+        expense = Expense.objects.create(main_payer=main_payer_user, bunch=bunch, amount=total_amount, subject=subject,
+                                         description=description, picture=image,
+                                         token_str=''.join(
+                                             random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
+        expense.save()
+
+        if type_of_calculate == "1":
+            print(list(bunch.users.all()))
+            num_of_users = len(list(bunch.users.all()))
+            share_of_each_user = total_amount / num_of_users
+            for user in list(bunch.users.all()):
+                pay = Pay.objects.create(expense=expense, payer=user, amount=share_of_each_user)
+                pay.save()
+        elif type_of_calculate == "2":
+            for user in list(bunch.users.all()):
+                if form_data.get(user.username) == "":
+                    share_of_user = 0
+                else:
+                    share_of_user = float(form_data.get(user.username))
+                pay = Pay.objects.create(expense=expense, payer=user, amount=share_of_user)
+                pay.save()
+        elif type_of_calculate == "3":
+            for user in list(bunch.users.all()):
+                if form_data.get(user.username) == "":
+                    percent_of_user = 0
+                else:
+                    percent_of_user = float(form_data.get(user.username))
+                share_of_user = percent_of_user * total_amount / 100
+                pay = Pay.objects.create(expense=expense, payer=user, amount=share_of_user)
+                pay.save()
+
+        return HttpResponse("Hello")
 
 
 def remove_group(request, token):

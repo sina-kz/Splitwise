@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User
+from .models import User, Pay
 from .models import Friend
 from .models import Bunch
 from .models import Expense
@@ -14,4 +14,4 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Friend)
 admin.site.register(Bunch)
 admin.site.register(Expense)
-
+admin.site.register(Pay)
