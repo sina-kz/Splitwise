@@ -21,7 +21,8 @@ def main_page(request):
     if request.user.is_authenticated:
         return redirect('/dashboard/')
     else:
-        return redirect('/login/')
+        print("yes")
+        return redirect("/login/")
 
 
 def login_view(request):
@@ -238,7 +239,7 @@ def friends_list(request):
     list_of_friends = list(user_friends)
     friends = []
     for friend in list_of_friends:
-        friends.append(friend.friend.username)
+        friends.append(friend.friend)
     context = {"friends": friends}
     return render(request, "list_of_friends.html", context)
 
@@ -341,7 +342,7 @@ def add_expense(request, token, type_of_calculate):
         form_data_files = request.FILES
         bunch = list(Bunch.objects.filter(token_str=token))[0]
         total_amount = int(form_data.get('totalAmount'))
-        subject = form_data.get('totalAmount')
+        subject = form_data.get('subject')
         description = form_data.get('description')
         main_payer = form_data.get('payer')
         main_payer_user = list(User.objects.filter(username=main_payer))[0]
@@ -391,3 +392,16 @@ def remove_group(request, token):
         Bunch.objects.filter(token_str=token).delete()
 
     return redirect("/groups-list/")
+
+
+@login_required(login_url='login_page')
+def financial_report(request):
+    current_user = request.user
+    user_pays = list(Pay.objects.filter(payer=current_user))
+    expenses = []
+    for pay in user_pays:
+        expense = pay.expense
+        share = int(pay.amount)
+        expenses += [(expense, share)]
+    context = {"expenses": expenses}
+    return render(request, 'expense_report.html', context)

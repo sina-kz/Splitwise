@@ -21,13 +21,17 @@
                         <table class="table mb-4">
                             <thead>
                             <tr>
-                                <th scope="col" class="text-center" style="width: 10%">نام کاربری دوست</th>
+                                <th scope="col" class="text-center" style="width: 10%">نام کاربری</th>
+                                <th scope="col" class="text-center" style="width: 10%">ایمیل</th>
+                                <th scope="col" class="text-center" style="width: 10%">شماره همراه</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for item in friends %}
                                 <tr>
-                                    <th scope="row" class="text-center">{{ item }}</th>
+                                    <th scope="row" class="text-center">{{ item.username }}</th>
+                                    <th scope="row" class="text-center">{{ item.email }}</th>
+                                    <th scope="row" class="text-center">{{ item.phone_number }}</th>
                                 </tr>
                             {% endfor %}
                             </tbody>

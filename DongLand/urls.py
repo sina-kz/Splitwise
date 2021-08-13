@@ -17,5 +17,6 @@ urlpatterns = [
     path('delete-group/<token>/', views.remove_group, name='remove_group'),
     path('select-pay-method/<token>/', views.select_pay_method, name='select_pay_method'),
     path('add-expense/<token>/<type_of_calculate>/', views.add_expense, name='add_expense'),
-    path('invite-user', views.invite_view, name='invite_user')
+    path('invite-user', views.invite_view, name='invite_user'),
+    path('financial-report/', views.financial_report, name='financial_report')
 ]
