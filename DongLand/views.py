@@ -405,3 +405,10 @@ def financial_report(request):
         expenses += [(expense, share)]
     context = {"expenses": expenses}
     return render(request, 'expense_report.html', context)
+
+
+def expense_detail(request, group_token, expense_token):
+    expense = list(Expense.objects.filter(token_str=expense_token))[0]
+    bunch = list(Bunch.objects.filter(token_str=group_token))[0]
+    context = {"expense": expense, "bunch": bunch}
+    return render(request, "expense_detail.html", context)
