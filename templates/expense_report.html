@@ -32,8 +32,9 @@
                                     <th scope="row" class="text-center">{{ item.0.subject }}</th>
                                     <td class="text-center">{{ item.1 }} تومان</td>
                                     <td class="text-center">
-                                        <a class="btn btn-info ms-1 text-center disabled"
-                                           href="{% url 'group_details' item.0.token_str %}">مشاهده هزینه</a>
+                                        <a class="btn btn-info ms-1 text-center"
+                                           href="{% url 'expense_detail' item.0.bunch.token_str item.0.token_str %}">مشاهده
+                                            هزینه</a>
                                     </td>
                                 </tr>
                             {% endfor %}

@@ -291,9 +291,11 @@ def groups_list(request):
 def group_details(request, group_name):
     group = Bunch.objects.get(token_str=group_name)
     group_users = list(group.users.all())
+    expenses = list(Expense.objects.filter(bunch=group))
     context = {"group_users": group_users,
                "group": group,
-               "token": group_name}
+               "token": group_name,
+               "expenses": expenses}
 
     num_of_users = len(list(group.users.all()))
     graph = [[0 for i in range(num_of_users)] for j in range(num_of_users)]
