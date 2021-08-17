@@ -12,6 +12,7 @@
             افراد گروه
         </h2>
     </div>
+    <br>
     <div class="container">
         <table class="table">
             <thead>
@@ -25,7 +26,9 @@
                 <tr>
                     <th scope="row" class="text-center">{{ user.username }}</th>
                     <td class="text-center">
-                        <a class="btn btn-danger text-center disabled">حذف کاربر</a>
+                        <a class="btn btn-danger text-center {% if not is_admin or user == admin %} disabled {% endif %}"
+                           href="{% url 'remove_user' token user.username %}">حذف
+                            کاربر</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -37,72 +40,130 @@
             هزینه ها
         </h2>
     </div>
-    <div class="container">
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col" class="text-center" style="width: 20%">عنوان هزینه</th>
-                <th scope="col" class="text-center" style="width: 20%">نام پرداخت کننده</th>
-                <th scope="col" class="text-center" style="width: 20%">هزینه کل</th>
-                <th scope="col" class="text-center" style="width: 20%">میزان سهم شما در هزینه</th>
-                <th scope="col" class="text-center" style="width: 20%">مشاهده جزییات هزینه</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for item in expenses %}
+    <br>
+    {% if amounts_and_expenses|length == 0 %}
+        <h5>هیچ هزینه ای تا به حال انجام نشده است</h5>
+    {% else %}
+        <div class="container">
+            <table class="table">
+                <thead>
                 <tr>
-                    <td class="text-center">{{ item.subject }}</td>
-                    <td class="text-center">
-                        {{ item.main_payer }}
-                    </td>
-                    <td class="text-center">
-                        {{ item.amount }}
-                    </td>
-                    <td class="text-center">
-                        نمیدونم
-                    </td>
-                    <td class="text-center">
-                        <a class="btn btn-danger text-center"
-                           href="{% url 'expense_detail' item.bunch.token_str item.token_str %}">مشاهده</a>
-                    </td>
+                    <th scope="col" class="text-center" style="width: 20%">عنوان هزینه</th>
+                    <th scope="col" class="text-center" style="width: 20%">نام پرداخت کننده</th>
+                    <th scope="col" class="text-center" style="width: 20%">هزینه کل</th>
+                    <th scope="col" class="text-center" style="width: 20%">میزان سهم شما در هزینه</th>
+                    <th scope="col" class="text-center" style="width: 20%">مشاهده جزییات هزینه</th>
                 </tr>
-            {% endfor %}
+                </thead>
+                <tbody>
+                {% for expense, amount in amounts_and_expenses %}
+                    <tr>
+                        <td class="text-center">{{ expense.subject }}</td>
+                        <td class="text-center">
+                            {{ expense.main_payer }}
+                        </td>
+                        <td class="text-center">
+                            {{ expense.amount }}
+                        </td>
+                        <td class="text-center">
+                            {{ amount }}
+                        </td>
+                        <td class="text-center">
+                            <a class="btn btn-danger text-center"
+                               href="{% url 'expense_detail' expense.bunch.token_str expense.token_str %}">مشاهده</a>
+                        </td>
+                    </tr>
+                {% endfor %}
 
-            </tbody>
-        </table>
-    </div>
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    <br>
+    <br>
+    <br>
     <div>
         <h2>
             نحوه تقسیم هزینه ها
         </h2>
     </div>
-    <div class="container">
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col" class="text-center" style="width: 20%">فرد بدهکار</th>
-                <th scope="col" class="text-center" style="width: 20%"></th>
-                <th scope="col" class="text-center" style="width: 20%">فرد بستانکار</th>
-                <th scope="col" class="text-center" style="width: 40%">مقدار هزینه</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td class="text-center">Todo</td>
-                <td class="text-center"><i class="fa fa-arrow-left" aria-hidden="true"></i></td>
-                <td class="text-center">Todo</td>
-                <td class="text-center">Todo</td>
+    <br>
+    {% if debtor_and_creditor|length == 0 %}
+        <h5>هیچ هزینه ای تا به حال انجام نشده است</h5>
+    {% else %}
+        <div class="container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col" class="text-center" style="width: 20%">فرد بدهکار</th>
+                    <th scope="col" class="text-center" style="width: 20%"></th>
+                    <th scope="col" class="text-center" style="width: 20%">فرد بستانکار</th>
+                    <th scope="col" class="text-center" style="width: 40%">مقدار هزینه</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for debtor,creditor,amount in debtor_and_creditor %}
+                    <tr>
+                        <td class="text-center">{{ debtor.username }}</td>
+                        <td class="text-center"><i class="fa fa-arrow-left" aria-hidden="true"></i></td>
+                        <td class="text-center">{{ creditor.username }}</td>
+                        <td class="text-center">{{ amount }}</td>
 
-            </tr>
-            </tbody>
-        </table>
-    </div>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
     <div class="input-group justify-content-center">
         <div class="input-group-btn">
             <a type="button" class="btn btn-primary btn-lg" href="{% url 'add_users' group.token_str %}">اضافه کردن
                 کاربر به گروه</a>
             <a type="button" class="btn btn-info btn-lg" href="{% url 'select_pay_method' token %}">اضافه کردن هزینه</a>
-            <a type="button" class="btn btn-danger btn-lg" href="{% url 'remove_group' token %}">ترک گروه</a>
         </div>
     </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+            <div class="alert alert-success fixed-bottom" style="width:70%; margin: auto; margin-bottom: 30px">
+                {{ message }}
+            </div>
+
+
+            <script type="text/javascript">
+
+                $(document).ready(function () {
+
+                    window.setTimeout(function () {
+                        $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                            $(this).remove();
+                        });
+                    }, 3000);
+
+                });
+            </script>
+
+        {% endfor %}
+    {% endif %}
+    {#    {% if messages.message == "message" %}#}
+    {#        <div class="alert alert-success fixed-bottom" style="width:70%; margin: auto; margin-bottom: 30px">#}
+    {#            هزینه با موفقیت ثبت شد#}
+    {#        </div>#}
+    {##}
+    {##}
+    {#        <script type="text/javascript">#}
+    {##}
+    {#            $(document).ready(function () {#}
+    {##}
+    {#                window.setTimeout(function () {#}
+    {#                    $(".alert").fadeTo(1000, 0).slideUp(1000, function () {#}
+    {#                        $(this).remove();#}
+    {#                    });#}
+    {#                }, 3000);#}
+    {##}
+    {#            });#}
+    {#        </script>#}
+    {#    {% endif %}#}
 {% endblock %}

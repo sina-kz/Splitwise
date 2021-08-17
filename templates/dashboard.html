@@ -13,4 +13,24 @@
     <h5>
         سلام {{ username }}
     </h5>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    {% if messages %}
+        <div class="alert alert-success fixed-bottom" style="width:70%; margin: auto; margin-bottom: 30px">
+            شما با موفقیت وارد شدید
+        </div>
+
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+
+                window.setTimeout(function () {
+                    $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                        $(this).remove();
+                    });
+                }, 3000);
+
+            });
+        </script>
+    {% endif %}
 {% endblock %}

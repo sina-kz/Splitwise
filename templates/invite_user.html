@@ -22,4 +22,24 @@
             </form>
         </div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    {% if message %}
+        <div class="alert alert-success fixed-bottom" style="width:70%; margin: auto; margin-bottom: 30px">
+            ایمیل دعوت ارسال گردید
+        </div>
+
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+
+                window.setTimeout(function () {
+                    $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                        $(this).remove();
+                    });
+                }, 3000);
+
+            });
+        </script>
+    {% endif %}
 {% endblock %}

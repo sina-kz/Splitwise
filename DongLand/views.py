@@ -2,6 +2,8 @@ import datetime
 import random
 import string
 
+import numpy as np
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -15,6 +17,7 @@ from .models import User, Friend, Bunch, Expense, Pay
 from django.core.mail import send_mail
 from Utils.Algorithms.split_algorithm import minCashFlow
 import re
+from django import template
 
 
 def main_page(request):
@@ -46,7 +49,8 @@ def login_view(request):
 
             login(request, user)
             print(user.is_staff)
-            return redirect('/dashboard')
+            messages.success(request, "message")
+            return redirect('/dashboard/')
             # TODO write pannel
             # return HttpResponse("successful login")
 
@@ -108,6 +112,7 @@ def logout_view(request):
 
 @login_required(login_url='login_page')
 def dashboard(request):
+    list(messages.get_messages(request))
     if not request.user.is_staff:
         return render(request, "dashboard.html", {"username": request.user.username})
     else:
@@ -137,7 +142,7 @@ def invite_view(request):
         email_from = settings.EMAIL_HOST_USER
         recievers = [email_url, ]
         send_mail(subject=email_subject, message=email_body, from_email=email_from, recipient_list=recievers)
-        return redirect('/dashboard/')
+        return render(request, "invite_user.html", {"message": "message"})
     return render(request, "invite_user.html")
 
 
@@ -157,6 +162,7 @@ def add_group(request):
             print(group_name)
             group.users.add(request.user)
             group.save()
+            messages.success(request, "message")
             return redirect(reverse("add_users", args=(group_name,)))
     data = {}
     data["error"] = error
@@ -165,6 +171,7 @@ def add_group(request):
 
 @login_required(login_url='login_page')
 def add_users(request, group_name):
+    list(messages.get_messages(request))
     error = {}
     if request.method == "POST":
         form_data = request.POST
@@ -193,7 +200,7 @@ def add_users(request, group_name):
         if len(error) == 0:
             group.users.add(user)
             group.save()
-            return redirect(reverse("add_users", args=(group_name,)))
+            return render(request, "add_users_to_group.html", {"message": "message"})
         else:
             return render(request, "add_users_to_group.html", data)
     return render(request, "add_users_to_group.html", {})
@@ -226,7 +233,7 @@ def add_friend(request):
         if len(error) == 0:
             Friend.objects.create(user=request.user, friend=user)
             Friend.objects.create(user=user, friend=request.user)
-            return redirect('/add-friend/')
+            return render(request, "add_friend.html", {"message": "message"})
         else:
             return render(request, "add_friend.html", data)
     return render(request, "add_friend.html", {})
@@ -289,13 +296,15 @@ def groups_list(request):
 
 @login_required(login_url='login_page')
 def group_details(request, group_name):
+    list(messages.get_messages(request))
+    current_user = request.user
     group = Bunch.objects.get(token_str=group_name)
     group_users = list(group.users.all())
     expenses = list(Expense.objects.filter(bunch=group))
-    context = {"group_users": group_users,
-               "group": group,
-               "token": group_name,
-               "expenses": expenses}
+    amounts = []
+    for expense in expenses:
+        pay = list(Pay.objects.filter(expense=expense, payer=current_user))[0]
+        amounts.append(int(pay.amount))
 
     num_of_users = len(list(group.users.all()))
     graph = [[0 for i in range(num_of_users)] for j in range(num_of_users)]
@@ -320,7 +329,34 @@ def group_details(request, group_name):
                 amount = pay[0].amount
                 graph[i][index_of_main_payer] += amount
     print(graph)
-    print(minCashFlow(graph))
+    result = (minCashFlow(graph))
+    result = np.array(result)
+    rows, cols = np.where(result != 0)
+    print(result)
+
+    debtors = []
+    creditors = []
+    amount_of_debt = []
+
+    for i in range(len(rows)):
+        debtors.append(group_users[rows[i]])
+        creditors.append(group_users[cols[i]])
+        amount_of_debt.append(int(result[rows[i]][cols[i]]))
+
+    is_admin = False
+    if group.creator.username == current_user.username:
+        is_admin = True
+    else:
+        is_admin = False
+
+    context = {"group_users": group_users,
+               "group": group,
+               "token": group_name,
+               "amounts_and_expenses": list(zip(expenses, amounts)),
+               "debtor_and_creditor": list(zip(debtors, creditors, amount_of_debt)),
+               "is_admin": is_admin,
+               "admin": group.creator}
+
     return render(request, "group_details.html", context)
 
 
@@ -380,7 +416,7 @@ def add_expense(request, token, type_of_calculate):
                 share_of_user = percent_of_user * total_amount / 100
                 pay = Pay.objects.create(expense=expense, payer=user, amount=share_of_user)
                 pay.save()
-
+        messages.info(request, "هزینه با موفقیت ثبت شد")
         return redirect(reverse("group_details", args=(token,)))
 
 
@@ -414,3 +450,11 @@ def expense_detail(request, group_token, expense_token):
     bunch = list(Bunch.objects.filter(token_str=group_token))[0]
     context = {"expense": expense, "bunch": bunch}
     return render(request, "expense_detail.html", context)
+
+
+def remove_user(request, token, username):
+    bunch = list(Bunch.objects.filter(token_str=token))[0]
+    user = User.objects.get(username=username)
+    bunch.users.remove(user)
+    messages.success(request, "کاربر با موفقیت حذف گردید")
+    return redirect(reverse("group_details", args=(token,)))

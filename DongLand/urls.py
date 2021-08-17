@@ -19,5 +19,6 @@ urlpatterns = [
     path('add-expense/<token>/<type_of_calculate>/', views.add_expense, name='add_expense'),
     path('groups/<group_token>/<expense_token>/', views.expense_detail, name='expense_detail'),
     path('invite-user', views.invite_view, name='invite_user'),
+    path('remove-user/<token>/<username>/', views.remove_user, name='remove_user'),
     path('financial-report/', views.financial_report, name='financial_report')
 ]
