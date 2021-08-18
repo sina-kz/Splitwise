@@ -22,6 +22,7 @@ urlpatterns = [
     path('remove-user/<token>/<username>/', views.remove_user, name='remove_user'),
     path('financial-report/', views.financial_report, name='financial_report'),
     path('remove-friend/<username>/', views.remove_friend, name='remove_friend'),
+    path('edit-expense/<group_token>/<expense_token>/<type_of_calculate>/', views.edit_expense, name='edit_expense'),
     # re_path(r'.*', views.page_not_found, name='page_not_found'),
 
 ]

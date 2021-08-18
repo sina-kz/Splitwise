@@ -574,3 +574,27 @@ def remove_friend(request, username):
 
 def page_not_found(request):
     return render(request, "page_not_found.html")
+
+
+def edit_expense(request, group_token, expense_token, type_of_calculate):
+    expense = list(Expense.objects.filter(token_str=expense_token))[0]
+    bunch_of_user = list(Bunch.objects.filter(token_str=group_token))
+    users = list(bunch_of_user[0].users.all())
+    pays = list(Pay.objects.filter(expense=expense))
+    amounts = []
+    for user in users:
+        for pay in pays:
+            if user.username == pay.payer.username:
+                amounts.append(pay.amount)
+
+    context = {"totalAmount": int(expense.amount),
+               "subject": expense.subject,
+               "description": expense.description,
+               "location": expense.location,
+               "date": expense.date,
+               "main_payer": expense.main_payer,
+               "users": users,
+               "type_of_calculate": type_of_calculate,
+               "image": expense.picture,
+               "amounts": amounts}
+    return render(request, "edit_expense.html", context=context)
