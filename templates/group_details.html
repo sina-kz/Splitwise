@@ -63,7 +63,7 @@
                             {{ expense.main_payer }}
                         </td>
                         <td class="text-center">
-                            {{ expense.amount }}
+                            {{ expense.amount.as_integer_ratio.0 }}
                         </td>
                         <td class="text-center">
                             {{ amount }}

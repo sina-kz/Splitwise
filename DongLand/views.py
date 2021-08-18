@@ -24,11 +24,11 @@ def main_page(request):
     if request.user.is_authenticated:
         return redirect('/dashboard/')
     else:
-        print("yes")
         return redirect("/login/")
 
 
 def login_view(request):
+    list(messages.get_messages(request))
     if request.user.is_authenticated:
         return redirect("/dashboard/")
     if request.method == 'POST':
@@ -97,6 +97,7 @@ def register_view(request):
                                             password=password2,
                                             username=username)
             user.save()
+            messages.success(request, "ثبت نام با موفقیت انجام شد")
             return redirect("/login")
         else:
             data["error"] = error
@@ -171,6 +172,18 @@ def add_group(request):
 
 @login_required(login_url='login_page')
 def add_users(request, group_name):
+    current_user = request.user
+    group = Bunch.objects.get(token_str=group_name)
+    group_users = list(group.users.all())
+
+    has_access = False
+    for user in group_users:
+        if current_user.username == user.username:
+            has_access = True
+            break
+    if not has_access:
+        return render(request, "bad_access.html")
+
     list(messages.get_messages(request))
     error = {}
     if request.method == "POST":
@@ -303,6 +316,15 @@ def group_details(request, group_name):
     group_users = list(group.users.all())
     expenses = list(Expense.objects.filter(bunch=group))
     amounts = []
+
+    has_access = False
+    for user in group_users:
+        if current_user.username == user.username:
+            has_access = True
+            break
+    if not has_access:
+        return render(request, "bad_access.html")
+
     for expense in expenses:
         pay = list(Pay.objects.filter(expense=expense, payer=current_user))[0]
         amounts.append(int(pay.amount))
@@ -363,6 +385,17 @@ def group_details(request, group_name):
 
 @login_required(login_url='login_page')
 def select_pay_method(request, token):
+    current_user = request.user
+    group = Bunch.objects.get(token_str=token)
+    group_users = list(group.users.all())
+
+    has_access = False
+    for user in group_users:
+        if current_user.username == user.username:
+            has_access = True
+            break
+    if not has_access:
+        return render(request, "bad_access.html")
     if request.method == "GET":
         return render(request, "select_pay_method.html", {"token": token})
     # elif request.method == "POST":
@@ -372,6 +405,18 @@ def select_pay_method(request, token):
 
 @login_required(login_url='login_page')
 def add_expense(request, token, type_of_calculate):
+    current_user = request.user
+    group = Bunch.objects.get(token_str=token)
+    group_users = list(group.users.all())
+
+    has_access = False
+    for user in group_users:
+        if current_user.username == user.username:
+            has_access = True
+            break
+    if not has_access:
+        return render(request, "bad_access.html")
+
     if request.method == "GET":
         bunch_of_user = list(Bunch.objects.filter(token_str=token))
         users = list(bunch_of_user[0].users.all())
@@ -384,11 +429,14 @@ def add_expense(request, token, type_of_calculate):
         subject = form_data.get('subject')
         description = form_data.get('description')
         main_payer = form_data.get('payer')
+        date = form_data.get('date')
+        location = form_data.get('location')
+
         main_payer_user = list(User.objects.filter(username=main_payer))[0]
         image = form_data_files.get('expenseImage')
 
         expense = Expense.objects.create(main_payer=main_payer_user, bunch=bunch, amount=total_amount, subject=subject,
-                                         description=description, picture=image,
+                                         description=description, location=location, date=date, picture=image,
                                          token_str=''.join(
                                              random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
         expense.save()
@@ -424,6 +472,17 @@ def add_expense(request, token, type_of_calculate):
 @login_required(login_url='login_page')
 def remove_group(request, token):
     current_user = request.user
+    group = Bunch.objects.get(token_str=token)
+    group_users = list(group.users.all())
+
+    has_access = False
+    for user in group_users:
+        if current_user.username == user.username:
+            has_access = True
+            break
+    if not has_access:
+        return render(request, "bad_access.html")
+
     bunch_of_user = list(Bunch.objects.filter(token_str=token))
     bunch_of_user[0].users.remove(current_user)
 
@@ -447,6 +506,18 @@ def financial_report(request):
 
 
 def expense_detail(request, group_token, expense_token):
+    current_user = request.user
+    group = Bunch.objects.get(token_str=group_token)
+    group_users = list(group.users.all())
+
+    has_access = False
+    for user in group_users:
+        if current_user.username == user.username:
+            has_access = True
+            break
+    if not has_access:
+        return render(request, "bad_access.html")
+
     expense = list(Expense.objects.filter(token_str=expense_token))[0]
     bunch = list(Bunch.objects.filter(token_str=group_token))[0]
     context = {"expense": expense, "bunch": bunch}
@@ -454,6 +525,15 @@ def expense_detail(request, group_token, expense_token):
 
 
 def remove_user(request, token, username):
+    current_user = request.user
+    group = Bunch.objects.get(token_str=token)
+
+    has_access = False
+    if current_user.username == group.creator.username:
+        has_access = True
+    if not has_access:
+        return render(request, "bad_access.html")
+
     bunch = list(Bunch.objects.filter(token_str=token))[0]
     user = User.objects.get(username=username)
     bunch.users.remove(user)
@@ -463,8 +543,15 @@ def remove_user(request, token, username):
 
 def remove_friend(request, username):
     current_user = request.user
-    user = User.objects.get(username=username)
-    Friend.objects.get(user=current_user, friend=user).delete()
-    Friend.objects.get(user=user, friend=current_user).delete()
-    messages.success(request, f'کاربر {username} با موفقیت از دوستان شما حذف شد')
-    return redirect("/friends-list/")
+    try:
+        user = User.objects.get(username=username)
+        Friend.objects.get(user=current_user, friend=user).delete()
+        Friend.objects.get(user=user, friend=current_user).delete()
+        messages.success(request, f'کاربر {username} با موفقیت از دوستان شما حذف شد')
+        return redirect("/friends-list/")
+    except Friend.DoesNotExist:
+        return render(request, "bad_access.html")
+
+
+def page_not_found(request):
+    return render(request, "page_not_found.html")

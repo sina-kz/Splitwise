@@ -5,6 +5,12 @@
     اضافه کردن هزینه جدید
 {% endblock %}
 
+{% block header %}
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
 {% block content %}
     {% if users|length > 1 %}
         <form method="POST" action="." enctype="multipart/form-data">
@@ -28,6 +34,20 @@
             <div class="form-group">
                 <label for="descriptionInput">توضیحات هزینه</label>
                 <textarea class="form-control" id="descriptionInput" rows="3" name="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="locationInput">مکان هزینه</label>
+                <input type="text" class="form-control" id="locationInput" aria-describedby="emailHelp"
+                       placeholder="آدرس هزینه انجام شده را وارد کنید" name="location">
+            </div>
+            <div class="form-group">
+                <label for="datepicker">تاریخ هزینه</label>
+                <input id="datepicker" width="276" name="date"/>
+                <script>
+                    $('#datepicker').datepicker({
+                        showOtherMonths: true
+                    });
+                </script>
             </div>
             <label class="my-1 mr-2" for="selectPayer">پرداخت کننده هزینه</label>
             <select class="custom-select my-1 mr-sm-2" id="selectPayer" name="payer" required>

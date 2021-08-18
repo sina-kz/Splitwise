@@ -75,4 +75,28 @@
             </div>
         </section>
     </div>
+    {% if messages %}
+        {% for message in messages %}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+            <div class="alert alert-success fixed-bottom" style="width:70%; margin: auto; margin-bottom: 30px">
+                {{ message }}
+            </div>
+
+
+            <script type="text/javascript">
+
+                $(document).ready(function () {
+
+                    window.setTimeout(function () {
+                        $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                            $(this).remove();
+                        });
+                    }, 3000);
+
+                });
+            </script>
+
+        {% endfor %}
+    {% endif %}
 {% endblock %}

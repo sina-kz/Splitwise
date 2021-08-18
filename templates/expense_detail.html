@@ -12,14 +12,14 @@
                 <p>عنوان هزینه انجام شده: {{ expense.subject }}</p>
                 <p>توضیحات هزینه انجام شده: {{ expense.description }}</p>
                 <p>مکان هزینه انجام شده: {{ expense.location }}</p>
-                <p>زمان هزینه انجام شده: {{ expense.date_created }}</p>
+                <p>زمان هزینه انجام شده: {{ expense.date }}</p>
                 <p>فرد پرداخت کننده هزینه: {{ expense.main_payer.username }}</p>
-                <p>مقدار هزینه انجام شده: {{ expense.amount }}</p>
+                <p>مقدار هزینه انجام شده: {{ expense.amount.as_integer_ratio.0 }}</p>
                 <p>نام گروه: {{ bunch.name }}</p>
             </div>
             <div class="col text-center">
                 <img src="{{ expense.picture.url }}" class="img-fluid img-thumbnail" alt="Responsive image"
-                     style="width: 80%; height: 100%">
+                     style="width: 100%; height: 100%">
             </div>
         </div>
     </div>
