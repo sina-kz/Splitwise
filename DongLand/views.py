@@ -46,9 +46,15 @@ def login_view(request):
             data["username"] = user_name
             return render(request, "auth-sign-in.html", context=data)
         else:
-
+            try:
+                remember_me = form_data["rememberMe"]
+            except:
+                remember_me = False
+            if not remember_me:
+                request.session.set_expiry(0)
+            else:
+                request.session.set_expiry(1209600)
             login(request, user)
-            print(user.is_staff)
             messages.success(request, "message")
             return redirect('/dashboard/')
             # TODO write pannel
@@ -436,9 +442,11 @@ def add_expense(request, token, type_of_calculate):
         image = form_data_files.get('expenseImage')
 
         expense = Expense.objects.create(main_payer=main_payer_user, bunch=bunch, amount=total_amount, subject=subject,
-                                         description=description, location=location, date=date, picture=image,
+                                         description=description, location=location, date=date,
                                          token_str=''.join(
                                              random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
+        if image:
+            expense.picture = image
         expense.save()
 
         if type_of_calculate == "1":
