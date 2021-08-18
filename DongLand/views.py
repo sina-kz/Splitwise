@@ -495,14 +495,22 @@ def remove_group(request, token):
 @login_required(login_url='login_page')
 def financial_report(request):
     current_user = request.user
-    user_pays = list(Pay.objects.filter(payer=current_user))
-    expenses = []
-    for pay in user_pays:
-        expense = pay.expense
-        share = int(pay.amount)
-        expenses += [(expense, share)]
-    context = {"expenses": expenses}
-    return render(request, 'expense_report.html', context)
+    if not current_user.is_staff:
+        user_pays = list(Pay.objects.filter(payer=current_user))
+        expenses = []
+        for pay in user_pays:
+            expense = pay.expense
+            share = int(pay.amount)
+            expenses += [(expense, share, expense.main_payer)]
+        context = {"expenses": expenses}
+        return render(request, 'expense_report.html', context)
+    else:
+        all_expenses = list(Expense.objects.all())
+        expenses = []
+        for expense in all_expenses:
+            expenses += [(expense, int(expense.amount), expense.main_payer)]
+        context = {"expenses": expenses}
+        return render(request, 'expense_report_admin.html', context)
 
 
 def expense_detail(request, group_token, expense_token):
@@ -521,7 +529,10 @@ def expense_detail(request, group_token, expense_token):
     expense = list(Expense.objects.filter(token_str=expense_token))[0]
     bunch = list(Bunch.objects.filter(token_str=group_token))[0]
     context = {"expense": expense, "bunch": bunch}
-    return render(request, "expense_detail.html", context)
+    if not current_user.is_staff:
+        return render(request, "expense_detail.html", context)
+    else:
+        return render(request, "expense_detail_admin.html", context)
 
 
 def remove_user(request, token, username):
