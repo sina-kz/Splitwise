@@ -24,14 +24,31 @@
                                 <th scope="col" class="text-center" style="width: 10%">نام کاربری</th>
                                 <th scope="col" class="text-center" style="width: 10%">ایمیل</th>
                                 <th scope="col" class="text-center" style="width: 10%">شماره همراه</th>
+                                <th scope="col" class="text-center" style="width: 10%">حذف دوست</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for item in friends %}
                                 <tr>
                                     <th scope="row" class="text-center">{{ item.username }}</th>
-                                    <th scope="row" class="text-center">{{ item.email }}</th>
-                                    <th scope="row" class="text-center">{{ item.phone_number }}</th>
+                                    <th scope="row" class="text-center">
+                                        {% if item.email %}
+                                            {{ item.email }}
+                                        {% else %}
+                                            {{ 'ایمیل ثبت نشده است' }}
+                                        {% endif %}
+                                    </th>
+                                    <th scope="row" class="text-center">
+                                        {% if item.phone_number %}
+                                            {{ item.phone_number }}
+                                        {% else %}
+                                            {{ 'شماره همراه ثبت نشده است' }}
+                                        {% endif %}
+                                    </th>
+                                    <td class="text-center">
+                                        <a class="btn btn-danger text-center"
+                                           href="{% url 'remove_friend' item.username %}">حذف</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -42,5 +59,29 @@
                 <!-- </div> -->
             </div>
         </div>
+    {% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+            <div class="alert alert-success fixed-bottom" style="width:70%; margin: auto; margin-bottom: 30px">
+                {{ message }}
+            </div>
+
+
+            <script type="text/javascript">
+
+                $(document).ready(function () {
+
+                    window.setTimeout(function () {
+                        $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                            $(this).remove();
+                        });
+                    }, 3000);
+
+                });
+            </script>
+
+        {% endfor %}
     {% endif %}
 {% endblock %}

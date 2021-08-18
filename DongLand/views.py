@@ -241,6 +241,7 @@ def add_friend(request):
 
 @login_required(login_url='login_page')
 def friends_list(request):
+    list(messages.get_messages(request))
     current_user = request.user
     user_friends = Friend.objects.filter(user=current_user)
     list_of_friends = list(user_friends)
@@ -456,5 +457,14 @@ def remove_user(request, token, username):
     bunch = list(Bunch.objects.filter(token_str=token))[0]
     user = User.objects.get(username=username)
     bunch.users.remove(user)
-    messages.success(request, "کاربر با موفقیت حذف گردید")
+    messages.success(request, f"کاربر {username} با موفقیت حذف گردید")
     return redirect(reverse("group_details", args=(token,)))
+
+
+def remove_friend(request, username):
+    current_user = request.user
+    user = User.objects.get(username=username)
+    Friend.objects.get(user=current_user, friend=user).delete()
+    Friend.objects.get(user=user, friend=current_user).delete()
+    messages.success(request, f'کاربر {username} با موفقیت از دوستان شما حذف شد')
+    return redirect("/friends-list/")
