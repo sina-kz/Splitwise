@@ -42,7 +42,8 @@ class Expense(models.Model):
     location = models.TextField(blank=True, unique=False, null=True, verbose_name='location')
     amount = models.FloatField(max_length=15, verbose_name="amount")
     date = models.CharField(max_length=20, blank=True, null=True, verbose_name='date')
-    picture = models.ImageField(upload_to="images", blank=True, null=True, verbose_name='picture')
+    picture = models.ImageField(upload_to="images", blank=True, null=True, verbose_name='picture',
+                                default="images/no_image.png")
     token_str = models.CharField(max_length=10, default=''.join(
         random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
 
