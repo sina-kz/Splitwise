@@ -1,4 +1,4 @@
-{% extends "user_base.html" %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block page_title %}
@@ -14,7 +14,7 @@
                         <img src="{% static 'images/error/404.png' %}" class="img-fluid iq-error-img" alt="">
                         <h2 class="mb-0 mt-4">اوه! این صفحه کار نمی کند.</h2>
                         <p>صفحه مورد درخواست شما وجود ندارد.</p>
-                        <a class="btn btn-primary d-inline-flex align-items-center mt-3" href="index.html"><i
+                        <a class="btn btn-primary d-inline-flex align-items-center mt-3" href="{%  url 'main_page' %}"><i
                                 class="ri-home-4-line"></i>بازگشت به صفحه اصلی</a>
                     </div>
                 </div>
