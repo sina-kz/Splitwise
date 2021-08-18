@@ -104,7 +104,7 @@ def register_view(request):
                                             username=username)
             user.save()
             messages.success(request, "ثبت نام با موفقیت انجام شد")
-            return redirect("/login")
+            return redirect("/login/")
         else:
             data["error"] = error
             return render(request, "auth-sign-up.html", context=data)
@@ -598,3 +598,7 @@ def edit_expense(request, group_token, expense_token, type_of_calculate):
                "image": expense.picture,
                "amounts": amounts}
     return render(request, "edit_expense.html", context=context)
+
+
+def user_profile(request):
+    return render(request, "user_profile.html", {"user": request.user})
