@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from DongLand import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('kdhpqhdpihqpidnqwkndpqfhipqhpfiq/', admin.site.urls),
     path('', include('DongLand.urls'))
 ]
 
