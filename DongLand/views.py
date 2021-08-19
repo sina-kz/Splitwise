@@ -640,3 +640,22 @@ def edit_expense(request, group_token, expense_token, type_of_calculate):
 
 def user_profile(request):
     return render(request, "user_profile.html", {"user": request.user})
+
+
+def delete_user(request):
+    if request.method == "POST":
+        form_data = request.POST
+        current_user = request.user
+        user_name = form_data["username"]
+        password = form_data["pass"]
+        user = authenticate(username=user_name, password=password)
+        data = {}
+        error = {}
+        if user is None or user_name != request.user.username:
+            error["username"] = "نام‌کاربری یا رمز عبور اشتباه است"
+            data["error"] = error
+            return render(request, "auth-sign-in.html", context=data)
+        else:
+            User.objects.filter(username=user_name).delete()
+            return redirect('/logout/')
+    return render(request, "delete_user.html")

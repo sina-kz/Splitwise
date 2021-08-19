@@ -24,4 +24,5 @@ urlpatterns = [
     path('remove-friend/<username>/', views.remove_friend, name='remove_friend'),
     path('edit-expense/<group_token>/<expense_token>/<type_of_calculate>/', views.edit_expense, name='edit_expense'),
     path('view-profile/', views.user_profile, name='user_profile'),
+    path('delete-user/', views.delete_user, name='delete_user'),
 ]
