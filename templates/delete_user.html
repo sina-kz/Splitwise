@@ -1,0 +1,39 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block page_title %}
+    حذف حساب کاربری
+{% endblock %}
+
+{% block content %}
+    <div class="container" id="registration-form">
+        <div class="image"></div>
+        <div class="frm">
+            <h2 style="margin-bottom: 30px">حذف حساب کاربری</h2>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="floating-input form-group">
+                    <label for="username">نام کاربری</label>
+                    <input type="text" class="form-control" name="username" placeholder="نام کاربری">
+                </div>
+                <div class="floating-input form-group">
+                    <label for="pass">رمز عبور</label>
+                    <input type="password" class="form-control" name="pass" placeholder="رمز عبور">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-danger btn-lg"
+                            style="background-color: #e60505; border-color: #e60505">
+                        تایید و حذف حساب کاربری
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% if error.group_name %}
+            <div class="col-lg-12">
+                <div class="alert alert-danger" role="alert">
+                    {{ error.group_name }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
