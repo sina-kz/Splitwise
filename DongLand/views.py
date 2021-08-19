@@ -120,6 +120,7 @@ def logout_view(request):
 @login_required(login_url='login_page')
 def dashboard(request):
     list(messages.get_messages(request))
+    print(request.user.is_super)
     if not request.user.is_staff:
         return render(request, "dashboard.html", {"username": request.user.username})
     else:

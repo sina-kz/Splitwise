@@ -24,7 +24,6 @@ SECRET_KEY = 'django-insecure-=xb8_ps8u2l7l)538u1^cq_3ohryhm36$yu8%8u1j&w0^4-+m0
 DEBUG = True
 
 ALLOWED_HOSTS = []
-print(BASE_DIR + "ALi")
 # Application definition
 
 INSTALLED_APPS = [
