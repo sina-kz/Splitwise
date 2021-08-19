@@ -82,7 +82,7 @@
                         </td>
                         <td class="text-center">
                             <a class="btn btn-danger text-center"
-                               href="{% url 'expense_detail' expense.bunch.token_str expense.token_str %}">حذف هزینه</a>
+                               href="{% url 'delete_expense' expense.bunch.token_str expense.token_str %}">حذف هزینه</a>
                         </td>
                     </tr>
                 {% endfor %}

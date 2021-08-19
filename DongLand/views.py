@@ -685,4 +685,7 @@ def delete_user(request):
             return redirect('/logout/')
     return render(request, "delete_user.html")
 
-def delete_expense(request, expense_token):
+
+def delete_expense(request, group_token, expense_token):
+    Expense.objects.filter(token_str=expense_token).delete()
+    return redirect(f"/groups/{group_token}/")
