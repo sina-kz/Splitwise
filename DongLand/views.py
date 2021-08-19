@@ -610,9 +610,8 @@ def edit_expense(request, group_token, expense_token, type_of_calculate):
         return render(request, "edit_expense.html", context=context)
     elif request.method == "POST":
         expense = list(Expense.objects.filter(token_str=expense_token))[0]
-        bunch = list(Bunch.objects.filter(token_str=group_token))
-        users = list(bunch[0].users.all())
-        pays = list(Pay.objects.filter(expense=expense))
+        bunch = list(Bunch.objects.filter(token_str=group_token))[0]
+        Pay.objects.filter(expense=expense).delete()
 
         form_data = request.POST
         form_data_files = request.FILES
@@ -624,7 +623,7 @@ def edit_expense(request, group_token, expense_token, type_of_calculate):
         location = form_data.get('location')
 
         main_payer_user = list(User.objects.filter(username=main_payer))[0]
-        image = form_data_files.get('expenseImage')
+        image = form_data_files.get('editExpenseImage')
         expense.subject = subject
         expense.description = description
         expense.amount = total_amount
@@ -634,6 +633,32 @@ def edit_expense(request, group_token, expense_token, type_of_calculate):
         if image:
             expense.picture = image
         expense.save()
+
+        if type_of_calculate == "1":
+            print(list(bunch.users.all()))
+            num_of_users = len(list(bunch.users.all()))
+            share_of_each_user = total_amount / num_of_users
+            for user in list(bunch.users.all()):
+                pay = Pay.objects.create(expense=expense, payer=user, amount=share_of_each_user)
+                pay.save()
+        elif type_of_calculate == "2":
+            for user in list(bunch.users.all()):
+                if form_data.get(user.username) == "":
+                    share_of_user = 0
+                else:
+                    share_of_user = float(form_data.get(user.username))
+                pay = Pay.objects.create(expense=expense, payer=user, amount=share_of_user)
+                pay.save()
+        elif type_of_calculate == "3":
+            for user in list(bunch.users.all()):
+                if form_data.get(user.username) == "":
+                    percent_of_user = 0
+                else:
+                    percent_of_user = float(form_data.get(user.username))
+                share_of_user = percent_of_user * total_amount / 100
+                pay = Pay.objects.create(expense=expense, payer=user, amount=share_of_user)
+                pay.save()
+        messages.info(request, "هزینه با موفقیت ویرایش شد")
 
         return redirect(f"/groups/{group_token}/")
 
@@ -654,8 +679,10 @@ def delete_user(request):
         if user is None or user_name != request.user.username:
             error["username"] = "نام‌کاربری یا رمز عبور اشتباه است"
             data["error"] = error
-            return render(request, "auth-sign-in.html", context=data)
+            return render(request, "delete_user.html", context=data)
         else:
             User.objects.filter(username=user_name).delete()
             return redirect('/logout/')
     return render(request, "delete_user.html")
+
+def delete_expense(request, expense_token):
