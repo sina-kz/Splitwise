@@ -147,9 +147,17 @@ def invite_view(request):
             'url': 'http://localhost/register'
         })
         email_from = settings.EMAIL_HOST_USER
-        recievers = [email_url, ]
-        send_mail(subject=email_subject, message=email_body, from_email=email_from, recipient_list=recievers)
-        return render(request, "invite_user.html", {"message": "message"})
+        error = {}
+        users_list = list(User.objects.all())
+        for user in users_list:
+            if user.email == email_url:
+                error['email'] = f'ایمیل {email_url} قبلا در سامانه ثبت شده است'
+        if len(error) == 0:
+            recievers = [email_url, ]
+            send_mail(subject=email_subject, message=email_body, from_email=email_from, recipient_list=recievers)
+            return render(request, "invite_user.html", {"message": "message"})
+        else:
+            return render(request, "invite_user.html", {"error": error})
     return render(request, "invite_user.html")
 
 
