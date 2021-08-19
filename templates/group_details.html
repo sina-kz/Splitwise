@@ -48,11 +48,13 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col" class="text-center" style="width: 20%">عنوان هزینه</th>
+                    <th scope="col" class="text-center" style="width: 10%">عنوان هزینه</th>
                     <th scope="col" class="text-center" style="width: 20%">نام پرداخت کننده</th>
                     <th scope="col" class="text-center" style="width: 20%">هزینه کل</th>
                     <th scope="col" class="text-center" style="width: 20%">میزان سهم شما در هزینه</th>
-                    <th scope="col" class="text-center" style="width: 20%">مشاهده جزییات هزینه</th>
+                    <th scope="col" class="text-center" style="width: 10%">مشاهده جزییات هزینه</th>
+                    <th scope="col" class="text-center" style="width: 10%">ویرایش هزینه</th>
+                    <th scope="col" class="text-center" style="width: 10%">حذف هزینه</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -69,8 +71,18 @@
                             {{ amount }}
                         </td>
                         <td class="text-center">
+                            <a class="btn btn-info text-center"
+                               href="{% url 'expense_detail' expense.bunch.token_str expense.token_str %}">مشاهده
+                                هزینه</a>
+                        </td>
+                        <td class="text-center">
+                            <a class="btn btn-primary text-center"
+                               href="{% url 'edit_expense' expense.bunch.token_str expense.token_str expense.type_of_calculation %}">ویرایش
+                                هزینه</a>
+                        </td>
+                        <td class="text-center">
                             <a class="btn btn-danger text-center"
-                               href="{% url 'expense_detail' expense.bunch.token_str expense.token_str %}">مشاهده</a>
+                               href="{% url 'expense_detail' expense.bunch.token_str expense.token_str %}">حذف هزینه</a>
                         </td>
                     </tr>
                 {% endfor %}
