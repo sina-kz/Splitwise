@@ -677,6 +677,7 @@ def edit_expense(request, group_token, expense_token, type_of_calculate):
 
 
 def user_profile(request):
+    list(messages.get_messages(request))
     return render(request, "user_profile.html", {"user": request.user})
 
 
@@ -702,3 +703,32 @@ def delete_user(request):
 def delete_expense(request, group_token, expense_token):
     Expense.objects.filter(token_str=expense_token).delete()
     return redirect(f"/groups/{group_token}/")
+
+
+def change_password(request):
+    if request.method == "POST":
+        form_data = request.POST
+        current_user = request.user
+        old_password = form_data["old_pass"]
+        new_password = form_data["new_pass"]
+        new_password2 = form_data["new_pass2"]
+        user = authenticate(username=request.user.username, password=old_password)
+        data = {}
+        error = {}
+        if old_password == "" or new_password == "" or new_password2 == "":
+            error["empty_field"] = "تمامی فیلدها باید پر شوند"
+        elif user is None:
+            error["password"] = "رمز عبور فعلی صحیح نیست"
+        elif new_password != new_password2:
+            error["new_pass"] = "رمز عبور جدید و تکرار آن مطابقت ندارند"
+        if len(error) != 0:
+            data["error"] = error
+            return render(request, "change_password.html", data)
+        else:
+            user = User.objects.get(username=request.user.username)
+            user.set_password(new_password)
+            user.save()
+            login(request, user)
+            messages.success(request, "رمز عبور با موفقیت تغییر کرد")
+            return redirect('/view-profile/')
+    return render(request, "change_password.html")

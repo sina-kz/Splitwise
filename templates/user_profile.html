@@ -136,7 +136,11 @@
             <div class="input-group-btn">
                 <a type="button" class="btn btn-info btn-lg" href=""
                    style="background-color: #0a0e7c; border-color: #0a0e7c">
-                    ویرایش
+                    ویرایش اطلاعات
+                </a>
+                <a type="button" class="btn btn-info btn-lg" href="{% url 'change_password' %}"
+                   style="background-color: #40874f; border-color: #40874f">
+                    تغییر رمز عبور
                 </a>
                 <a type="button" class="btn btn-danger btn-lg" href="{% url 'delete_user' %}"
                    style="background-color: #d90b0b; border-color: #d90b0b">
@@ -144,5 +148,29 @@
                 </a>
             </div>
         </div>
+        {% if messages %}
+            {% for message in messages %}
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+                <div class="alert alert-success fixed-bottom" style="width:70%; margin: auto; margin-bottom: 30px">
+                    {{ message }}
+                </div>
+
+
+                <script type="text/javascript">
+
+                    $(document).ready(function () {
+
+                        window.setTimeout(function () {
+                            $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                                $(this).remove();
+                            });
+                        }, 3000);
+
+                    });
+                </script>
+
+            {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}
