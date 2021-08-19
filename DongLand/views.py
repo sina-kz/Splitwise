@@ -577,27 +577,56 @@ def page_not_found(request):
 
 
 def edit_expense(request, group_token, expense_token, type_of_calculate):
-    expense = list(Expense.objects.filter(token_str=expense_token))[0]
-    bunch_of_user = list(Bunch.objects.filter(token_str=group_token))
-    users = list(bunch_of_user[0].users.all())
-    pays = list(Pay.objects.filter(expense=expense))
-    amounts = []
-    for user in users:
-        for pay in pays:
-            if user.username == pay.payer.username:
-                amounts.append(pay.amount)
+    if request.method == "GET":
+        expense = list(Expense.objects.filter(token_str=expense_token))[0]
+        bunch_of_user = list(Bunch.objects.filter(token_str=group_token))
+        users = list(bunch_of_user[0].users.all())
+        pays = list(Pay.objects.filter(expense=expense))
+        user_and_amounts = []
+        for user in users:
+            for pay in pays:
+                if user.username == pay.payer.username:
+                    user_and_amounts.append((user, pay.amount, int(pay.amount) / int(expense.amount)))
 
-    context = {"totalAmount": int(expense.amount),
-               "subject": expense.subject,
-               "description": expense.description,
-               "location": expense.location,
-               "date": expense.date,
-               "main_payer": expense.main_payer,
-               "users": users,
-               "type_of_calculate": type_of_calculate,
-               "image": expense.picture,
-               "amounts": amounts}
-    return render(request, "edit_expense.html", context=context)
+        context = {"totalAmount": int(expense.amount),
+                   "subject": expense.subject,
+                   "description": expense.description,
+                   "location": expense.location,
+                   "date": expense.date,
+                   "main_payer": expense.main_payer,
+                   "users": users,
+                   "type_of_calculate": type_of_calculate,
+                   "image": expense.picture,
+                   "user_and_amounts": user_and_amounts}
+        return render(request, "edit_expense.html", context=context)
+    elif request.method == "POST":
+        expense = list(Expense.objects.filter(token_str=expense_token))[0]
+        bunch = list(Bunch.objects.filter(token_str=group_token))
+        users = list(bunch[0].users.all())
+        pays = list(Pay.objects.filter(expense=expense))
+
+        form_data = request.POST
+        form_data_files = request.FILES
+        total_amount = int(form_data.get('totalAmount'))
+        subject = form_data.get('subject')
+        description = form_data.get('description')
+        main_payer = form_data.get('payer')
+        date = form_data.get('date')
+        location = form_data.get('location')
+
+        main_payer_user = list(User.objects.filter(username=main_payer))[0]
+        image = form_data_files.get('expenseImage')
+        expense.subject = subject
+        expense.description = description
+        expense.amount = total_amount
+        expense.date = date
+        expense.location = location
+        expense.main_payer = main_payer_user
+        if image:
+            expense.picture = image
+        expense.save()
+
+        return redirect(f"/groups/{group_token}/")
 
 
 def user_profile(request):
