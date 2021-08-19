@@ -44,6 +44,7 @@ class Expense(models.Model):
     date = models.CharField(max_length=20, blank=True, null=True, verbose_name='date')
     picture = models.ImageField(upload_to="images", blank=True, null=True, verbose_name='picture',
                                 default="images/no_image.png")
+    type_of_calculation = models.IntegerField(blank=True, null=True)
     token_str = models.CharField(max_length=10, default=''.join(
         random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
 

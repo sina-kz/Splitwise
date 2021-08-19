@@ -451,6 +451,7 @@ def add_expense(request, token, type_of_calculate):
 
         expense = Expense.objects.create(main_payer=main_payer_user, bunch=bunch, amount=total_amount, subject=subject,
                                          description=description, location=location, date=date,
+                                         type_of_calculation=int(type_of_calculate),
                                          token_str=''.join(
                                              random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
         if image:
