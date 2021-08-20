@@ -1,0 +1,99 @@
+{% extends "user_base.html" %}
+{% load static %}
+
+{% block page_title %}
+    ویرایش پروفایل
+{% endblock %}
+
+{% block header %}
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{% block content %}
+    <h2 style="margin-bottom: 30px; color: #0a0e7c">
+        ویرایش پروفایل
+    </h2>
+    <br>
+    <form method="post" action="/edit-profile/">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="floating-label form-group">
+                    <label>نام</label>
+                    <input class="floating-input form-control" type="text" placeholder="نام"
+                           name="firstname" {% if fields.first_name %}value="{{ fields.first_name }} {% endif %}"
+                           required>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="floating-label form-group">
+                    <label>نام خانوادگی</label>
+                    <input class="floating-input form-control" type="text" placeholder="نام خانوادگی"
+                           name="lastname" {% if fields.last_name %}value="{{ fields.last_name }} {% endif %}" required>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="floating-label form-group">
+                    <label>نام کاربری</label>
+                    <input class="floating-input form-control" type="text" placeholder="نام کاربری"
+                           name="username" {% if fields.username %}value="{{ fields.username }} {% endif %}" required>
+                </div>
+            </div>
+            {% if error.username %}
+                <div class="col-lg-6">
+                    <div class="alert alert-danger" role="alert">
+                        {{ error.username }}
+                    </div>
+                </div>
+            {% endif %}
+            <div class="col-lg-6">
+                <div class="floating-label form-group">
+                    <label>شماره تلفن همراه</label>
+                    <input class="floating-input form-control" type="text" placeholder="شماره همراه"
+                           name="phone_number" {% if fields.phone_number %}value="{{ fields.phone_number }} {% endif %}"
+                           required>
+                </div>
+            </div>
+            {% if error.invalid_phone_number %}
+                <div class="col-lg-6">
+                    <div class="alert alert-danger" role="alert">
+                        {{ error.invalid_phone_number }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if error.phone_number %}
+                <div class="col-lg-6">
+                    <div class="alert alert-danger" role="alert">
+                        {{ error.phone_number }}
+                    </div>
+                </div>
+            {% endif %}
+            <div class="col-lg-6">
+                <div class="floating-label form-group">
+                    <label>ایمیل</label>
+                    <input class="floating-input form-control" type="email" placeholder="ایمیل"
+                           name="email" {% if fields.email %}value="{{ fields.email }} {% endif %}" required>
+                </div>
+            </div>
+            {% if error.email %}
+                <div class="col-lg-6">
+                    <div class="alert alert-danger" role="alert">
+                        {{ error.email }}
+                    </div>
+                </div>
+            {% endif %}
+            <div class="col-lg-12">
+                <div class="floating-label form-group">
+                    <label>آدرس</label>
+                    <input class="floating-input form-control" type="text" placeholder="آدرس"
+                           name="address" {% if fields.address %}value="{{ fields.address }} {% endif %}">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="background-color: #0a0e7c; border-color: #0a0e7c">
+            ویرایش
+        </button>
+    </form>
+{% endblock %}
