@@ -930,3 +930,72 @@ def change_password(request):
             messages.success(request, "رمز عبور با موفقیت تغییر کرد")
             return redirect('/view-profile/')
     return render(request, "change_password.html")
+
+
+@login_required(login_url='login_page')
+def edit_profile(request):
+    if request.method == "GET":
+        user = User.objects.get(username=request.user.username)
+        fields = {"first_name": user.first_name,
+                   "last_name": user.last_name,
+                   "email": user.email,
+                   "phone_number": user.phone_number,
+                   "address": user.address,
+                   "username": user.username}
+        context = {"fields": fields}
+        return render(request, "edit_profile.html", context=context)
+    elif request.method == "POST":
+        form_data = request.POST
+        username = form_data.get('username')
+        firstname = form_data.get('firstname')
+        lastname = form_data.get('lastname')
+        phone_number = form_data.get('phone_number')
+        email = form_data.get('email')
+        address = form_data.get('address')
+        user = User.objects.get(username=request.user.username)
+        fields = {"first_name": user.first_name,
+                  "last_name": user.last_name,
+                  "email": user.email,
+                  "phone_number": user.phone_number,
+                  "address": user.address,
+                  "username": user.username}
+        data = {}
+        error = {}
+        try:
+            new_user = User.objects.get(username=username)
+            if new_user != user:
+                error["username"] = "نام کاربری وارد شده تکراری می باشد!"
+        except User.DoesNotExist:
+            pass
+
+        try:
+            new_user = User.objects.get(email=email)
+            if new_user.username != user.username:
+                error["email"] = "ایمیل وارد شده تکراری می باشد!"
+        except User.DoesNotExist:
+            pass
+
+        try:
+            new_user = User.objects.get(phone_number=phone_number)
+            if new_user != user:
+                error["phone_number"] = "شماره تلفن وارد شده تکراری می باشد!"
+        except User.DoesNotExist:
+            pass
+
+        if not re.match("^09\d{9}", phone_number):
+            error["invalid_phone_number"] = "شماره تلفن وارد شده صحیح نمی باشد!"
+        if len(error) != 0:
+            data["error"] = error
+            data["fields"] = fields
+            return render(request, "edit_profile.html", context=data)
+        user.username = username
+        user.first_name = firstname
+        user.last_name = lastname
+        user.phone_number = phone_number
+        user.email = email
+        user.address = address
+        user.save()
+        login(request, user)
+        messages.info(request, "پروفایل با موفقیت ویرایش شد")
+
+        return redirect('/view-profile/')
