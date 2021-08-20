@@ -63,31 +63,23 @@
                         </a>
                         <ul id="mydrive" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
                             <li class=" ">
-                                <a href="page-alexa.html">
-                                    <i class="las la-comments-dollar"></i><span>مشاهده تراکنش‌های گروه</span>
+                                <a href="{% url 'financial_report' %}" class="">
+                                    <i class="las la-file-invoice-dollar"></i><span>گزارشات مالی گروه‌ها</span>
                                 </a>
+                                <ul id="page-files" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
+                                </ul>
                             </li>
                             <li class=" ">
-                                <a href="page-android.html">
+                                <a href="{% url 'admin-groups-list' %}">
                                     <i class="las la-info-circle"></i><span>مشاهده اطلاعات گروه‌ها</span>
                                 </a>
                             </li>
-                            <li class=" ">
-                                <a href="page-brightspot.html">
-                                    <i class="las la-trash"></i><span>حذف گروه</span>
-                                </a>
-                            </li>
+                           
                         </ul>
                     </li>
+                    
                     <li class=" ">
-                        <a href="{% url 'financial_report' %}" class="">
-                            <i class="las la-file-invoice-dollar"></i><span>گزارشات مالی کاربران</span>
-                        </a>
-                        <ul id="page-files" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">
-                        </ul>
-                    </li>
-                    <li class=" ">
-                        <a href="page-folders.html" class="">
+                        <a href="{% url 'show_users_admin' %}" class="">
                             <i class="las la-user-check"></i><span>مشاهده کاربران</span>
                         </a>
                         <ul id="page-folders" class="iq-submenu collapse" data-parent="#iq-sidebar-toggle">

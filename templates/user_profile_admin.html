@@ -1,0 +1,180 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block page_title %}
+    پروفایل
+{% endblock %}
+
+
+{% block content %}
+    <div class="col-lg-12 col-md-12">
+        <div class="card card-block card-stretch card-height">
+            <div class="card-header">
+                <div class="header-title">
+                    <h4 class="card-title">پروفایل</h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <ul class="list-inline p-0 m-0">
+                    <li class="d-flex align-items-center mb-3">
+                        <div class="profile-icon iq-icon-box rounded-small bg-light svg-danger text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#081282"
+                                 class="bi bi-person-circle" viewBox="0 0 16 16">
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                <path fill-rule="evenodd"
+                                      d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                            </svg>
+                        </div>
+                        <div class="pl-3">
+                            <h5>نام</h5>
+                            <p class="mb-0">
+                                {% if user.first_name %}
+                                    {{ user.first_name }}
+                                {% else %}
+                                    نام شما ثبت نشده است
+                                {% endif %}
+                            </p>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-center mb-3">
+                        <div class="profile-icon iq-icon-box rounded-small bg-light svg-danger text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#d92152"
+                                 class="bi bi-person-circle" viewBox="0 0 16 16">
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                <path fill-rule="evenodd"
+                                      d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                            </svg>
+                        </div>
+                        <div class="pl-3">
+                            <h5>نام خانوادگی</h5>
+                            <p class="mb-0">
+                                {% if user.last_name %}
+                                    {{ user.last_name }}
+                                {% else %}
+                                    نام خانوادگی شما ثبت نشده است
+                                {% endif %}
+                            </p>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-center mb-3">
+                        <div class="profile-icon iq-icon-box rounded-small  bg-light svg-primary text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#724b82"
+                                 class="bi bi-person-badge" viewBox="0 0 16 16">
+                                <path d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                <path d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0h-7zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-.492C11.392 12.387 10.063 12 8 12s-3.392.387-4.224.803a4.2 4.2 0 0 0-.776.492V2.5z"/>
+                            </svg>
+                        </div>
+                        <div class="pl-3">
+                            <h5>نام کاربری</h5>
+                            <p class="mb-0">
+                                {% if user.username %}
+                                    {{ user.username }}
+                                {% else %}
+                                    نام کاربری شما ثبت نشده است
+                                {% endif %}
+                            </p>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-center mb-3">
+                        <div class="profile-icon iq-icon-box rounded-small bg-light svg-warning text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#17b6eb"
+                                 class="bi bi-envelope-fill" viewBox="0 0 16 16">
+                                <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z"/>
+                            </svg>
+                        </div>
+                        <div class="pl-3">
+                            <h5>ایمیل</h5>
+                            <p class="mb-0">
+                                {% if user.email %}
+                                    {{ user.email }}
+                                {% else %}
+                                    ایمیل شما ثبت نشده است
+                                {% endif %}
+                            </p>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-center mb-3">
+                        <div class="profile-icon iq-icon-box rounded-small  bg-light svg-success text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#2c943a"
+                                 class="bi bi-phone-fill" viewBox="0 0 16 16">
+                                <path d="M3 2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V2zm6 11a1 1 0 1 0-2 0 1 1 0 0 0 2 0z"/>
+                            </svg>
+                        </div>
+                        <div class="pl-3">
+                            <h5>شماره همراه</h5>
+                            <p class="mb-0">
+                                {% if user.phone_number %}
+                                    {{ user.phone_number }}
+                                {% else %}
+                                    شماره همراه شما ثبت نشده است
+                                {% endif %}
+                            </p>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-center">
+                        <div class="profile-icon iq-icon-box rounded-small  bg-light svg-info text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#fae60c"
+                                 class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                            </svg>
+                        </div>
+                        <div class="pl-3">
+                            <h5>آدرس</h5>
+                            <p class="mb-0">
+                                {% if user.address %}
+                                    {{ user.address }}
+                                {% else %}
+                                    آدرس شما ثبت نشده است
+                                {% endif %}
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+     
+
+        {% if request.user.username == user.username %}
+        <div class="input-group justify-content-center">
+            <div class="input-group-btn">
+                <a type="button" class="btn btn-info btn-lg" href=""
+                   style="background-color: #0a0e7c; border-color: #0a0e7c">
+                    ویرایش اطلاعات
+                </a>
+                <a type="button" class="btn btn-info btn-lg" href="{% url 'change_password' %}"
+                   style="background-color: #40874f; border-color: #40874f">
+                    تغییر رمز عبور
+                </a>
+                <a type="button" class="btn btn-danger btn-lg" href="{% url 'delete_user' %}"
+                   style="background-color: #d90b0b; border-color: #d90b0b">
+                    حذف حساب کاربری
+                </a>
+            </div>
+        </div>
+        {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+                <div class="alert alert-success fixed-bottom" style="width:70%; margin: auto; margin-bottom: 30px">
+                    {{ message }}
+                </div>
+
+
+                <script type="text/javascript">
+
+                    $(document).ready(function () {
+
+                        window.setTimeout(function () {
+                            $(".alert").fadeTo(1000, 0).slideUp(1000, function () {
+                                $(this).remove();
+                            });
+                        }, 3000);
+
+                    });
+                </script>
+
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

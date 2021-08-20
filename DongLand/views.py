@@ -120,7 +120,6 @@ def logout_view(request):
 @login_required(login_url='login_page')
 def dashboard(request):
     list(messages.get_messages(request))
-    print(request.user.is_super)
     if not request.user.is_staff:
         return render(request, "dashboard.html", {"username": request.user.username})
     else:
@@ -279,6 +278,15 @@ def friends_list(request):
     context = {"friends": friends}
     return render(request, "list_of_friends.html", context)
 
+@login_required(login_url='login_page')
+def show_users_admin(request):
+    list(messages.get_messages(request))
+    current_user = request.user
+    users = User.objects.all()
+    list_of_users = list(users)
+    
+    context = {"friends": list_of_users}
+    return render(request, "admin_show_users.html", context)
 
 @login_required(login_url='login_page')
 def groups_list(request):
@@ -322,6 +330,46 @@ def groups_list(request):
     context = {"groups": groups}
     return render(request, "list_of_groups.html", context)
 
+@login_required(login_url='login_page')
+def groups_list_admin(request):
+    current_user = request.user
+    if not current_user.is_staff:
+        return HttpResponse("you don't have access")
+
+    user_groups = Bunch.objects.all()
+    list_of_groups = list(user_groups)
+    groups = []
+    for group in list_of_groups:
+        group_users = list(group.users.all())
+
+        num_of_users = len(list(group.users.all()))
+        print(num_of_users)
+        graph = [[0 for i in range(num_of_users)] for j in range(num_of_users)]
+
+        expenses = list(Expense.objects.filter(bunch=group))
+        for i in range(len(group_users)):
+            print(group_users[i].username)
+        for expense in expenses:
+            for i in range(len(group_users)):
+                pay = list(Pay.objects.filter(expense=expense, payer=group_users[i]))
+                main_payer = expense.main_payer
+                index_of_main_payer = None
+
+                if main_payer.username == group_users[i].username:
+                    continue
+
+                for j in range(len(group_users)):
+                    if main_payer.username == group_users[j].username:
+                        index_of_main_payer = j
+                        break
+                if len(pay) != 0:
+                    amount = pay[0].amount
+                    graph[i][index_of_main_payer] += int(amount)
+        final_graph = minCashFlow(graph)
+       
+        groups.append(group)
+    context = {"groups": groups}
+    return render(request, "admin_list_of_groups.html", context)
 
 @login_required(login_url='login_page')
 def group_details(request, group_name):
@@ -398,6 +446,79 @@ def group_details(request, group_name):
 
     return render(request, "group_details.html", context)
 
+
+@login_required(login_url='login_page')
+def group_details_admin(request, group_name):
+    list(messages.get_messages(request))
+    current_user = request.user
+    if not current_user.is_staff:
+        return HttpResponse("no access")
+    group = Bunch.objects.get(token_str=group_name)
+    group_users = list(group.users.all())
+    expenses = list(Expense.objects.filter(bunch=group))
+    amounts = []
+
+    has_access = True
+    if not has_access:
+        return render(request, "bad_access.html")
+
+    for expense in expenses:
+        pay = list(Pay.objects.filter(expense=expense, payer=current_user))
+        if len(pay) != 0:
+            amounts.append(int(pay[0].amount))
+
+    num_of_users = len(list(group.users.all()))
+    graph = [[0 for i in range(num_of_users)] for j in range(num_of_users)]
+
+    expenses = list(Expense.objects.filter(bunch=group))
+    for i in range(len(group_users)):
+        print(group_users[i].username)
+    for expense in expenses:
+        for i in range(len(group_users)):
+            pay = list(Pay.objects.filter(expense=expense, payer=group_users[i]))
+            main_payer = expense.main_payer
+            index_of_main_payer = None
+
+            if main_payer.username == group_users[i].username:
+                continue
+
+            for j in range(len(group_users)):
+                if main_payer.username == group_users[j].username:
+                    index_of_main_payer = j
+                    break
+            if len(pay) != 0:
+                amount = pay[0].amount
+                graph[i][index_of_main_payer] += int(amount)
+    print(graph)
+    result = (minCashFlow(graph))
+    result = np.array(result)
+    rows, cols = np.where(result != 0)
+    print(result)
+
+    debtors = []
+    creditors = []
+    amount_of_debt = []
+
+    for i in range(len(rows)):
+        debtors.append(group_users[rows[i]])
+        creditors.append(group_users[cols[i]])
+        amount_of_debt.append(int(result[rows[i]][cols[i]]))
+
+    is_admin = False
+    if group.creator.username == current_user.username:
+        is_admin = True
+    else:
+        is_admin = False
+
+    context = {"group_users": group_users,
+               "group": group,
+               "token": group_name,
+               "amounts_and_expenses": list(zip(expenses, amounts)),
+               "debtor_and_creditor": list(zip(debtors, creditors, amount_of_debt)),
+               "is_admin": is_admin,
+               "admin": group.creator}
+
+    return render(request, "group_details_admin.html", context)
 
 @login_required(login_url='login_page')
 def select_pay_method(request, token):
@@ -519,6 +640,35 @@ def remove_group(request, token):
 
 
 @login_required(login_url='login_page')
+def remove_group_admin(request, token):
+    print("remove group")
+    current_user = request.user
+    if not current_user.is_staff:
+        return HttpResponse("no access")
+    group = Bunch.objects.get(token_str=token)
+    group_users = list(group.users.all())
+
+    has_access = True
+    
+    if not has_access:
+        return render(request, "bad_access.html")
+
+    bunch_of_user = list(Bunch.objects.filter(token_str=token))
+    bunch_of_user[0].users.remove(current_user)
+
+    if len(bunch_of_user[0].users.all()) == 0:
+        Bunch.objects.filter(token_str=token).delete()
+
+    Expense.objects.filter(bunch=group, main_payer=current_user).delete()
+    for expense in list(Expense.objects.filter(bunch=group)):
+        Pay.objects.filter(expense=expense, payer=current_user).delete()
+    
+    Bunch.delete(group)
+
+    return redirect("/admin-groups-list/")
+
+
+@login_required(login_url='login_page')
 def financial_report(request):
     current_user = request.user
     if not current_user.is_staff:
@@ -594,6 +744,17 @@ def remove_friend(request, username):
     except Friend.DoesNotExist:
         return render(request, "bad_access.html")
 
+def remove_user_admin(request, username):
+    current_user = request.user
+    try:
+        if username == current_user.username:
+            return render(request, "bad_access.html")
+        User.objects.get(username=username).delete()
+        
+        messages.success(request, f'کاربر {username} با موفقیت از لیست کاربران حذف شد')
+        return redirect(reverse('show_users_admin'))
+    except user.DoesNotExist:
+        return render(request, "bad_access.html")
 
 def page_not_found(request):
     return render(request, "page_not_found.html")
@@ -681,6 +842,10 @@ def user_profile(request):
     list(messages.get_messages(request))
     return render(request, "user_profile.html", {"user": request.user})
 
+def user_profile_admin(request, username):
+    list(messages.get_messages(request))
+    user = User.objects.get(username=username)
+    return render(request, "user_profile_admin.html", {"user": user})
 
 def delete_user(request):
     if request.method == "POST":
