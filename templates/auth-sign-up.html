@@ -86,6 +86,13 @@
                                             <label>ایمیل</label>
                                         </div>
                                     </div>
+                                    {% if error.email %}
+                                        <div class="col-lg-12">
+                                            <div class="alert alert-danger" role="alert">
+                                                {{ error.email }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                     <div class="col-lg-6">
                                         <div class="floating-label form-group">
                                             <input class="floating-input form-control" type="password" placeholder=" "

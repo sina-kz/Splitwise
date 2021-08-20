@@ -89,6 +89,12 @@ def register_view(request):
             pass
 
         try:
+            user = User.objects.get(email=email)
+            error["email"] = "ایمیل وارد شده تکراری می باشد!"
+        except User.DoesNotExist:
+            pass
+
+        try:
             user = User.objects.get(phone_number=phone_number)
             error["phone_number"] = "شماره تلفن وارد شده تکراری می باشد!"
         except User.DoesNotExist:
@@ -278,15 +284,21 @@ def friends_list(request):
     context = {"friends": friends}
     return render(request, "list_of_friends.html", context)
 
+
 @login_required(login_url='login_page')
 def show_users_admin(request):
     list(messages.get_messages(request))
     current_user = request.user
     users = User.objects.all()
     list_of_users = list(users)
-    
+
+    has_access = request.user.is_staff
+    if not has_access:
+        return render(request, "bad_access.html")
+
     context = {"friends": list_of_users}
     return render(request, "admin_show_users.html", context)
+
 
 @login_required(login_url='login_page')
 def groups_list(request):
@@ -330,12 +342,13 @@ def groups_list(request):
     context = {"groups": groups}
     return render(request, "list_of_groups.html", context)
 
+
 @login_required(login_url='login_page')
 def groups_list_admin(request):
     current_user = request.user
-    if not current_user.is_staff:
-        return HttpResponse("you don't have access")
-
+    has_access = request.user.is_staff
+    if not has_access:
+        return render(request, "bad_access.html")
     user_groups = Bunch.objects.all()
     list_of_groups = list(user_groups)
     groups = []
@@ -366,10 +379,11 @@ def groups_list_admin(request):
                     amount = pay[0].amount
                     graph[i][index_of_main_payer] += int(amount)
         final_graph = minCashFlow(graph)
-       
+
         groups.append(group)
     context = {"groups": groups}
     return render(request, "admin_list_of_groups.html", context)
+
 
 @login_required(login_url='login_page')
 def group_details(request, group_name):
@@ -451,14 +465,12 @@ def group_details(request, group_name):
 def group_details_admin(request, group_name):
     list(messages.get_messages(request))
     current_user = request.user
-    if not current_user.is_staff:
-        return HttpResponse("no access")
     group = Bunch.objects.get(token_str=group_name)
     group_users = list(group.users.all())
     expenses = list(Expense.objects.filter(bunch=group))
     amounts = []
 
-    has_access = True
+    has_access = request.user.is_staff
     if not has_access:
         return render(request, "bad_access.html")
 
@@ -519,6 +531,7 @@ def group_details_admin(request, group_name):
                "admin": group.creator}
 
     return render(request, "group_details_admin.html", context)
+
 
 @login_required(login_url='login_page')
 def select_pay_method(request, token):
@@ -643,13 +656,11 @@ def remove_group(request, token):
 def remove_group_admin(request, token):
     print("remove group")
     current_user = request.user
-    if not current_user.is_staff:
-        return HttpResponse("no access")
     group = Bunch.objects.get(token_str=token)
     group_users = list(group.users.all())
 
-    has_access = True
-    
+    has_access = request.user.is_staff
+
     if not has_access:
         return render(request, "bad_access.html")
 
@@ -662,7 +673,7 @@ def remove_group_admin(request, token):
     Expense.objects.filter(bunch=group, main_payer=current_user).delete()
     for expense in list(Expense.objects.filter(bunch=group)):
         Pay.objects.filter(expense=expense, payer=current_user).delete()
-    
+
     Bunch.delete(group)
 
     return redirect("/admin-groups-list/")
@@ -689,6 +700,7 @@ def financial_report(request):
         return render(request, 'expense_report_admin.html', context)
 
 
+@login_required(login_url='login_page')
 def expense_detail(request, group_token, expense_token):
     current_user = request.user
     group = Bunch.objects.get(token_str=group_token)
@@ -711,6 +723,7 @@ def expense_detail(request, group_token, expense_token):
         return render(request, "expense_detail_admin.html", context)
 
 
+@login_required(login_url='login_page')
 def remove_user(request, token, username):
     current_user = request.user
     group = Bunch.objects.get(token_str=token)
@@ -733,6 +746,7 @@ def remove_user(request, token, username):
     return redirect(reverse("group_details", args=(token,)))
 
 
+@login_required(login_url='login_page')
 def remove_friend(request, username):
     current_user = request.user
     try:
@@ -744,22 +758,30 @@ def remove_friend(request, username):
     except Friend.DoesNotExist:
         return render(request, "bad_access.html")
 
+
+@login_required(login_url='login_page')
 def remove_user_admin(request, username):
     current_user = request.user
+    has_access = request.user.is_staff
+    if not has_access:
+        return render(request, "bad_access.html")
     try:
         if username == current_user.username:
             return render(request, "bad_access.html")
         User.objects.get(username=username).delete()
-        
+
         messages.success(request, f'کاربر {username} با موفقیت از لیست کاربران حذف شد')
         return redirect(reverse('show_users_admin'))
-    except user.DoesNotExist:
+    except User.DoesNotExist:
         return render(request, "bad_access.html")
 
+
+@login_required(login_url='login_page')
 def page_not_found(request):
     return render(request, "page_not_found.html")
 
 
+@login_required(login_url='login_page')
 def edit_expense(request, group_token, expense_token, type_of_calculate):
     if request.method == "GET":
         expense = list(Expense.objects.filter(token_str=expense_token))[0]
@@ -838,15 +860,23 @@ def edit_expense(request, group_token, expense_token, type_of_calculate):
         return redirect(f"/groups/{group_token}/")
 
 
+@login_required(login_url='login_page')
 def user_profile(request):
     list(messages.get_messages(request))
     return render(request, "user_profile.html", {"user": request.user})
 
+
+@login_required(login_url='login_page')
 def user_profile_admin(request, username):
     list(messages.get_messages(request))
+    has_access = request.user.is_staff
+    if not has_access:
+        return render(request, "bad_access.html")
     user = User.objects.get(username=username)
     return render(request, "user_profile_admin.html", {"user": user})
 
+
+@login_required(login_url='login_page')
 def delete_user(request):
     if request.method == "POST":
         form_data = request.POST
@@ -866,11 +896,13 @@ def delete_user(request):
     return render(request, "delete_user.html")
 
 
+@login_required(login_url='login_page')
 def delete_expense(request, group_token, expense_token):
     Expense.objects.filter(token_str=expense_token).delete()
     return redirect(f"/groups/{group_token}/")
 
 
+@login_required(login_url='login_page')
 def change_password(request):
     if request.method == "POST":
         form_data = request.POST
