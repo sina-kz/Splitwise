@@ -1,3 +1,5 @@
-# Splitwise
+# Splitwise Web Application
 
-just for testing git.
+### Frameworks:
+* Django
+* Bootstrap
